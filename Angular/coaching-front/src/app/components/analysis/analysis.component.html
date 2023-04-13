@@ -1,0 +1,51 @@
+<div class="container mt-5">
+  <h2>Video streaming</h2>
+  <video src={{getVideo(toAnalizeMatch.cod)}} width="720px" height="480px" controls preload="none" id="video">
+  </video>
+</div>
+
+<div class="col-md-12 ">
+  <div>
+    <form #addForm="ngForm" (ngSubmit)="onAddAction(addForm)">
+      <div class="form-group">
+
+        <label for="type">Tipo de Acción: </label>
+        <select id="type" ngModel name="type" class="form-control">
+          <option selected> Ninguna </option>
+          <option value="FALTA_A_FAVOR">Falta a favor</option>
+          <option value="FALTA_EN_CONTRA">Falta en contra</option>
+          <option value="PENALTY_A_FAVOR">Penalti a favor</option>
+          <option value="PENALTY_EN_CONTRA">Penalti en contra</option>
+          <option value="ROBO_DE_BALON">Robo de balon</option>
+          <option value="PERDIDA_DE_BALON">Perdida de balon</option>
+          <option value="OCASION_A_FAVOR">Ocasion a favor</option>
+          <option value="OCASION_EN_CONTRA">Ocasion en contra</option>
+          <option value="CORNER_A_FAVOR">Corner a favor</option>
+          <option value="CORNER_EN_CONTRA">Corner en contra</option>
+          <option value="GOL_A_FAVOR">Gol a favor</option>
+          <option value="GOL_EN_CONTRA">Gol en contra</option>
+          <option value="PARADA">Parada</option>
+        </select>
+
+      </div>
+      <div class="form-group">
+        <label for="jugador"> Jugador: </label>
+        <select id="player" ngModel name="player" class="form-control" >
+
+          <option *ngFor="let player of toAnalizeMatch.localTeam.players" value={{player.dni}}>{{player.name}}</option>
+
+        </select>
+
+      </div>
+
+      <div>
+        <button type="button" id="add-action-form" class="btn btn-secondary" data-dismiss="modal">Borrar</button>
+        <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Añadir Acción</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+
+<p></p>

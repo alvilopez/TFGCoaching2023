@@ -1,0 +1,169 @@
+<div class="container" id="main-container" *ngIf="isLogged">
+  <div class="row">
+    <div *ngFor="let match of matches" class="col-md-12 ">
+      <div class="card m-b-30">
+        <div class="card-body row">
+          <!--<div class="col-6">
+              <a href=""><img src="{{player?.imageUrl}}" alt="" class="img-fluid rounded-circle w-60"></a>
+           </div>-->
+
+
+
+          <div class="col-6 card-title align-self-center mb-0">
+            <h5>Jornada:{{match?.matchNum}}</h5>
+          </div>
+        </div>
+
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Fecha: {{match?.date}}</li>
+          <li class="list-group-item"><i class="fa fa-phone float-right"></i>Rival: {{match?.visitantTeam?.name}} </li>
+        </ul>
+        <div class="card-body">
+          <div class="float-right btn-group btn-group-sm">
+            <a (click)="onOpenModal(match, 'show')" class="btn btn-outline-primary" data-placement="top"
+              data-original-title="Details"> Detalles </a>
+            <a (click)="analize(match)" class="btn btn-outline-primary " data-placement="top"
+              data-original-title="Update"> Analizar </a>
+            <a (click)="onOpenModal(match, 'delete')" class="btn btn-outline-danger " data-placement="top"
+              data-original-title="Update"> Eliminar </a>
+          </div>
+        </div>
+      </div>
+      <app-analysis id="Analysis" [toAnalizeMatch]="toAnalizeMatch" *ngIf="toAnalizeMatch == match"></app-analysis>
+
+
+
+    </div>
+    <button type="button " class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addMatchModal">Add Match
+    </button>
+
+
+  </div>
+
+  <div class="modal fade" id="addMatchModal" tabindex="-1" role="dialog" aria-labelledby="addMatchModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title" id="addMatchModalLabel">Añadir Partido</h1>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form #addForm="ngForm" (ngSubmit)="onAddMatch(addForm)">
+
+            <div class="col">
+              <div class="form-group">
+                <label for="matchNum">Jornada</label>
+                <input type="number" ngModel name="matchNum" class="form-control" id="matchNum" placeholder="Jornada"
+                  required>
+              </div>
+              <div class="form-group">
+                <label for="date">Fecha</label>
+                <input type="date" ngModel name="date" class="form-control" id="date" required>
+              </div>
+              <div class="form-group">
+                <label for="name">Nombre del equipo</label>
+                <input type="text" ngModel name="name" class="form-control" id="name" placeholder="Nombre" required>
+              </div>
+              <div class="form-group">
+                <label for="category">Categoría</label>
+                <input type="text" ngModel name="category" class="form-control" id="category" placeholder="Categoría"
+                  required>
+              </div>
+              <div class="form-group">
+                <label for="video">Vídeo</label>
+                <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload required>
+                <mat-progress-bar mode="indeterminate" id="progress" hidden></mat-progress-bar>
+              </div>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="add-match-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" id="saveButton" class="btn btn-primary">Save
+                changes</button>
+            </div>
+          </form>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="showMatchModal" tabindex="-1" role="dialog" aria-labelledby="showMatchModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updatePlayerModalLabel">Detalles del partido</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Fecha: {{toShowMatch?.date}}</li>
+          <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Jornada: {{toShowMatch?.matchNum}}</li>
+          <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Equipo Local :
+            {{toShowMatch?.localTeam?.name}}
+            <div *ngFor="let player of toShowMatch?.localTeam?.players">
+          <li>{{player.name}} {{player.surname}} {{player.number}}</li>
+            </div>
+          </li>
+
+        <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Equipo Visitante :
+          {{toShowMatch?.visitantTeam?.name}}
+          <div *ngFor="let player of toShowMatch?.visitantTeam?.players">
+            <li>{{player.name}} {{player.surname}} {{player.number}}</li>
+          </div>
+        </li>
+        </div>
+
+
+        <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Acciones del partido :
+        <div *ngFor="let action of toShowMatch?.actions">
+          <li>Minuto: {{obtenerMin(action.min)}} {{action.type}} -> {{action.player.name}} {{action.player.surname}}</li>
+        </div>
+        </li>
+
+        <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Fecha: {{toShowMatch?.date}}</li>
+
+        <div class="modal-footer">
+          <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+<div class="modal fade" id="deleteMatchModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModelLabel">Delete Match</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Seguro que quieres eliminar el partido de la jornada {{toDeleteMatch?.matchNum}}?</p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button (click)="deleteMatch(toDeleteMatch)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

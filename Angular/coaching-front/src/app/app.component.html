@@ -1,0 +1,41 @@
+
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Coaching</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+</head>
+
+
+
+<body>
+
+    <!-- Header -->
+    <div id="header">
+      <h1>
+        <a id="logo">Coaching</a>
+        <em> By Alvaro López</em>
+      </h1>
+
+      <!-- Nav -->
+      <nav id="nav">
+        <ul>
+          <li id ="home" class="current"><a  type="button" (click)="onOpenModal('home')" data-dismiss="modal" routerLink="/coach" >Perfil</a></li>
+          <li id="pestañaPlayers"><a  type="button" (click)="onOpenModal('players')" routerLink="/players" data-dismiss="modal"  >Plantilla</a></li>
+          <li id="pestañaMatches"><a  type="button" (click)="onOpenModal('matches')" data-dismiss="modal" routerLink="/match"  >Partidos </a></li>
+        </ul>
+      </nav>
+
+    </div>
+
+      <app-home></app-home>
+      <router-outlet></router-outlet>
+  </body>
+
+
+</html>
+
+
+
