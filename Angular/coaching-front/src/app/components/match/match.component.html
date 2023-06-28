@@ -1,8 +1,8 @@
 <div class="container" id="main-container" *ngIf="isLogged">
   <div class="row">
-    <div *ngFor="let match of matches" class="col-md-12 ">
-      <div class="card m-b-30">
-        <div class="card-body row">
+    <div *ngFor="let match of matches" class="col-12 ">
+      <div class="card">
+        <div class="card-body row g-2">
           <!--<div class="col-6">
               <a href=""><img src="{{player?.imageUrl}}" alt="" class="img-fluid rounded-circle w-60"></a>
            </div>-->
@@ -19,28 +19,33 @@
           <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Fecha: {{match?.date}}</li>
           <li class="list-group-item"><i class="fa fa-phone float-right"></i>Rival: {{match?.visitantTeam?.name}} </li>
         </ul>
+
+        <div class="progress form-group" *ngIf="progress > 0 && progress < 100 && match.id == matchVideoInProgress">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" [style.width.%]="progress"></div>
+        </div>
+
         <div class="card-body">
           <div class="float-right btn-group btn-group-sm">
             <a (click)="onOpenModal(match, 'show')" class="btn btn-outline-primary" data-placement="top"
               data-original-title="Details"> Detalles </a>
             <a (click)="analize(match)" class="btn btn-outline-primary " data-placement="top"
-              data-original-title="Update"> Analizar </a>
+              data-original-title="Update" [hidden]="progress > 0 && progress < 100 && match.id == matchVideoInProgress"> Analizar </a>
             <a (click)="onOpenModal(match, 'delete')" class="btn btn-outline-danger " data-placement="top"
               data-original-title="Update"> Eliminar </a>
           </div>
         </div>
       </div>
-      <app-analysis id="Analysis" [toAnalizeMatch]="toAnalizeMatch" *ngIf="toAnalizeMatch == match"></app-analysis>
-
-
-
+      <app-analysis class="row" id="Analysis" [toAnalizeMatch]="toAnalizeMatch" *ngIf="toAnalizeMatch == match"></app-analysis>
     </div>
-    <button type="button " class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addMatchModal">Add Match
-    </button>
-
-
+  </div>
+  <p></p>
+  <p></p>
+  <div class="row justify-content-center g-2">
+    <button type="button " class="col-5 btn btn-primary btn-lg" data-toggle="modal" data-target="#addMatchModal">Add Match</button>
   </div>
 
+
+  <!-- AÑADAIR NUEVO PARTIDO -->
   <div class="modal fade" id="addMatchModal" tabindex="-1" role="dialog" aria-labelledby="addMatchModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -80,8 +85,29 @@
                 <mat-progress-bar mode="indeterminate" id="progress" hidden></mat-progress-bar>
               </div>
 
+              <form #addPlayerForm="ngForm" (ngSubmit)="addPlayerToTeam(addPlayerForm)">
+                <div class="form-group">
+                  <label for="players">Jugador</label>
+                  <input type="text" ngModel name="name" class="form-control" id="name" placeholder="Nombre"
+                    required>
+                  <input type="text" ngModel name="surname" class="form-control" id="surname" placeholder="Apellidos"
+                    required>
+                  <input type="number" ngModel name="number" class="form-control" id="number" placeholder="Numero"
+                    required>
+                  <button [disabled]="addPlayerForm.invalid" type="submit" id="addPlayer" class="btn btn-primary">Añadir Jugador</button>
+                </div>
+              </form>
 
+              <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Jugadores:
+                <div *ngFor="let player of rivalTeam">
+                  <li>{{player.name}} {{player.surname}} {{player.number}}
+                    <button (click)="deletePlayer(player.number)" class="btn-danger">x</button>
+                  </li>
+
+                </div>
+              </li>
             </div>
+
             <div class="modal-footer">
               <button type="button" id="add-match-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button [disabled]="addForm.invalid" type="submit" id="saveButton" class="btn btn-primary">Save
@@ -96,6 +122,8 @@
     </div>
   </div>
 
+
+  <!-- VER DETALLES DEL PARTIDO -->
   <div class="modal fade" id="showMatchModal" tabindex="-1" role="dialog" aria-labelledby="showMatchModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -107,9 +135,9 @@
           </button>
         </div>
         <div class="modal-body">
-
           <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Fecha: {{toShowMatch?.date}}</li>
           <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Jornada: {{toShowMatch?.matchNum}}</li>
+          <li class="list-group-item" *ngIf="toShowMatch != null && toShowMatch.video == null"><i class="fa fa-envelope float-right"></i></li>
           <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Equipo Local :
             {{toShowMatch?.localTeam?.name}}
             <div *ngFor="let player of toShowMatch?.localTeam?.players">
@@ -158,7 +186,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Seguro que quieres eliminar el partido de la jornada {{toDeleteMatch?.matchNum}}?</p>
+        <p>¿Seguro que quieres eliminar el partido de la jornada {{toDeleteMatch?.matchNum}}? Se eliminarán todas las acciones asociadas al partido</p>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
           <button (click)="deleteMatch(toDeleteMatch)" class="btn btn-danger" data-dismiss="modal">Yes</button>
@@ -167,3 +195,6 @@
     </div>
   </div>
 </div>
+
+
+

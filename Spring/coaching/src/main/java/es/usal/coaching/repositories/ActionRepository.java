@@ -1,6 +1,6 @@
 package es.usal.coaching.repositories;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import org.springframework.data.repository.CrudRepository;
@@ -13,7 +13,7 @@ import es.usal.coaching.entities.Action;
 public interface ActionRepository extends CrudRepository<Action, Long>{
 
     
-    List<Action> findAllByPlayerIdIn(Set<Long> ids);
+    Collection<Action> findAllByPlayerIdIn(Set<Long> ids);
 
-    List<Action> findAllByPlayerId(Long id);
+    Collection<Action> findAllByPlayerId(Long id);
 }

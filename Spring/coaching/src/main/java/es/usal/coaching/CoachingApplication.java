@@ -16,9 +16,7 @@ public class CoachingApplication {
 		SpringApplication.run(CoachingApplication.class, args);
 	}
 
-	
 	@Bean
-	
 	public CorsFilter corsFilter() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);

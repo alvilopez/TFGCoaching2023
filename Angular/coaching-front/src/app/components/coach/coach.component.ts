@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NuevoUsuario } from '../models/nuevo-usuario';
 import { TokenService } from '../service/token.service';
 import { CoachService } from './coach.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-coach',
@@ -32,7 +33,11 @@ export class CoachComponent implements OnInit {
 
   }
 
+  public getFoto(img? : String){
+    console.log( environment.apiBaseUrl + "/files/" + this.tokenService.getUserName() + "/"  + img);
 
+    return environment.apiBaseUrl + "/files/" + this.tokenService.getUserName() + "/"  + img;
+  }
 
   public getUser(userName: string){
     this.coachService.getUser(userName).subscribe(

@@ -7,28 +7,30 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.mime.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,15 +38,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes.Any;
-
+import ch.qos.logback.core.joran.action.Action;
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.MatchDTO;
-
 import es.usal.coaching.services.MatchManagementService;
 import reactor.core.publisher.Mono;
 
@@ -59,11 +60,11 @@ public class MatchManagementController {
 
     
     @GetMapping(value="/match")
-    public ResponseEntity<List<MatchDTO>> getMatchs() {
+    public ResponseEntity<Collection<MatchDTO>> getMatchs() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername();    
-        List<MatchDTO> response = matchManagementService.getMatchs(username);
+        Collection<MatchDTO> response = matchManagementService.getMatchs(username);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }else{
@@ -79,7 +80,6 @@ public class MatchManagementController {
 
         MatchDTO response = matchManagementService.addMatch(request, username); 
 
-
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }else{
@@ -88,13 +88,12 @@ public class MatchManagementController {
     }
 
 
-    @PostMapping(value="/match/video")
-    public ResponseEntity<String> addMatchVideo( @RequestParam("file") MultipartFile file){
+    @PostMapping(value="/match/video/{idMatch}")
+    public ResponseEntity<String> addMatchVideo( @RequestParam("file") MultipartFile file,@PathVariable Long idMatch){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername(); 
-        String response = matchManagementService.addMatchVideo(file, username);
-
+        String response = matchManagementService.addMatchVideo(file, username, idMatch);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }else{
@@ -108,6 +107,7 @@ public class MatchManagementController {
     @GetMapping(value = "/video/{userName}/{title}", produces = "video/mp4")
     public Mono<Resource> getVideos(@PathVariable String title, @PathVariable String userName, @RequestHeader("Range") String range) {        
         System.out.println("range in bytes() : " + range);
+        title = "MATCH" + title;
         Mono<Resource> response = streamingService.getVideo(title, userName);
         return response;
     }
@@ -122,9 +122,9 @@ public class MatchManagementController {
         }
     }
 
-    @DeleteMapping(value="/match/{cod}")
-    public ResponseEntity<MatchDTO> deleteMatch(@PathVariable String cod){
-        MatchDTO response = matchManagementService.deleteMatch(cod);
+    @DeleteMapping(value="/match/{id}")
+    public ResponseEntity<MatchDTO> deleteMatch(@PathVariable Long id){
+        MatchDTO response = matchManagementService.deleteMatch(id);
 
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
@@ -133,9 +133,9 @@ public class MatchManagementController {
         }
     }
 
-    @PostMapping(value="/match/addAction/{matchCod}")
-    public ResponseEntity<ActionDTO> addAction(@RequestBody ActionDTO request, @PathVariable String matchCod){
-        ActionDTO response = matchManagementService.addAction(request, matchCod); 
+    @PostMapping(value="/match/action/{id}")
+    public ResponseEntity<ActionDTO> addAction(@RequestBody ActionDTO request, @PathVariable Long id){
+        ActionDTO response = matchManagementService.addAction(request, id); 
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }else{
@@ -143,8 +143,16 @@ public class MatchManagementController {
         }
     }
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    @DeleteMapping(value="/match/action/{id}")
+    public ResponseEntity<ActionDTO> deleteAction(@PathVariable Long id){
+        ActionDTO response = matchManagementService.deleteAction(id); 
+        if(response !=null){
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }else{
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
 
     @GetMapping(value = "/match/video/split/{match}")
     public byte[] splitVideo(HttpServletRequest request,
@@ -156,11 +164,6 @@ public class MatchManagementController {
         String username = userDetails.getUsername(); 
 
         matchManagementService.splitVideo(match, username);
-        
-        
-       
-
-
         response.setContentType("application/zip");
         response.setStatus(HttpServletResponse.SC_OK);
         response.addHeader("Content-Disposition", "attachment; filename=\"test.zip\"");
@@ -170,7 +173,7 @@ public class MatchManagementController {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
         ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
 
-        // Simple file list, just for tests
+        // Simple file Collection, just for tests
         ArrayList<File> files = new ArrayList<>(2);
         File file1 = new File("resources/videos/" + username + "/split/" + match+ "/");
         files.add(new File(file1.getAbsolutePath()));
@@ -198,4 +201,15 @@ public class MatchManagementController {
         return byteArrayOutputStream.toByteArray();
 
     }
+    
+    @GetMapping(value="/match/video/photo/{id}")
+    public ResponseEntity<ActionDTO> postMethodName(@PathVariable Long id) throws IOException {
+       
+        
+        ActionDTO response = matchManagementService.obtenerFotoDeVideo(id);
+
+        return new ResponseEntity<ActionDTO>(response, HttpStatus.OK);
+        
+    }
+    
 }

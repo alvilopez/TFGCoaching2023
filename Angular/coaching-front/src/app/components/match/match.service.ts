@@ -17,12 +17,15 @@ export class MatchService {
     return this.http.get<any>(`${this.apiServerUrl}/match`);
   }
 
-  public uploadVideo(file : File) : Observable<string>{
+  public uploadVideo(file? : File, idMatch? : number){
     const formData: FormData = new FormData();
-
+    if(file != undefined)
     formData.append('file', file);
 
-    return this.http.post<any>(`${this.apiServerUrl}/match/video`, formData);
+    return this.http.post(`${this.apiServerUrl}/match/video/${idMatch}`, formData, {
+      reportProgress : true,
+      observe: 'events'
+    });
 
   }
 
@@ -45,7 +48,7 @@ export class MatchService {
   // }
 
 
-  public deleteMatch(matchCod : string) : Observable<Match>{
+  public deleteMatch(matchCod : number | undefined) : Observable<Match>{
     return this.http.delete<Match>(`${this.apiServerUrl}/match/${matchCod}`);
   }
 }

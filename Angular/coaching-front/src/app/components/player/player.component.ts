@@ -85,7 +85,7 @@ export class PlayerComponent {
     );
   }
 
-  public onDeletePlayer(playerDni: string): void {
+  public onDeletePlayer(playerDni: string | undefined): void {
     this.playerService.deletePlayer(playerDni).subscribe(
       (response: Player) => {
         console.log(response);
@@ -117,9 +117,6 @@ export class PlayerComponent {
       this.toDeletePlayer = player;
       button.setAttribute('data-target', '#deletePlayerModal');
     }
-    if (mode === 'excel'){
-      this.fireEvent();
-    }
     container!.appendChild(button);
     button.click();
   }
@@ -139,7 +136,7 @@ export class PlayerComponent {
 
   }
 
-  selectStat(p : String, action : String ) : number{
+  selectStat(p : String | undefined, action : String ) : number{
     let contador : number = 0;
     for(let i = 0; i < this.actions.length; i++){
       if(this.actions[i].player.dni == p && this.actions[i].type == action){
@@ -148,49 +145,5 @@ export class PlayerComponent {
     }
     return contador;
   }
-
-
-  @ViewChild("tableStats") table!: ElementRef;
-
-  fireEvent() {
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(
-      this.table.nativeElement
-    );
-
-    /* new format */
-    var fmt = "0";
-    /* change cell format of range B2:D4 */
-    var range = { s: { r: 1, c: 1 }, e: { r: 2, c: 100000 } };
-    for (var R = range.s.r; R <= range.e.r; ++R) {
-      for (var C = range.s.c; C <= range.e.c; ++C) {
-        var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-        if (!cell || cell.t != "n") continue; // only format numeric cells
-        cell.z = fmt;
-      }
-    }
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    var fmt = "@";
-    wb.Sheets["Sheet1"]["F"] = fmt;
-
-    /* save to file */
-    XLSX.writeFile(wb, "SheetJS.xlsx");
-  }
-
-  public ACTIONS = [
-    {name : "FALTA_A_FAVOR", id : 1, description : "Falta a favor"},
-    {name : "FALTA_EN_CONTRA", id : 2, description : "Falta en contra"},
-    {name : "PENALTY_A_FAVOR", id : 3, description : "Penalti a favor"},
-    {name : "PENALTY_EN_CONTRA", id : 4, description : "Penalti en contra"},
-    {name : "ROBO_DE_BALON", id : 5, description : "Robo de balon"},
-    {name : "PERDIDA_DE_BALON", id : 6, description : "Perdida de balon"},
-    {name : "OCASION_A_FAVOR", id : 7, description : "Ocasion a favor"},
-    {name : "OCASION_EN_CONTRA", id : 8, description : "Ocasion en contra"},
-    {name : "CORNER_A_FAVOR", id : 9, description : "Corner a favor"},
-    {name : "CORNER_EN_CONTRA", id : 10, description : "Corner en contra"},
-    {name : "GOL_A_FAVOR", id : 11, description : "Gol a favor"},
-    {name : "GOL_EN_CONTRA", id : 12, description : "Gol en contra"},
-    {name : "PARADA", id :13, description : "Parada"}
-  ];
 
 }

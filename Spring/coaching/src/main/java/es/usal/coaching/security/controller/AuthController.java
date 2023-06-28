@@ -53,9 +53,7 @@ public class AuthController {
     TeamManagementService teamManagementService;
 
     @PostMapping("/nuevo")
-    public ResponseEntity<?> nuevo(
-        @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult){
-        
+    public ResponseEntity<?> nuevo(@RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult){
         
         nuevoUsuario.getTeam().setPlayers(new ArrayList<Player>());
         Coach usuario =

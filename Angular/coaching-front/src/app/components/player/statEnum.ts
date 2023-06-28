@@ -1,4 +1,6 @@
-var ACTIONS = [
+
+
+const ACTIONS = [
   {name : "FALTA_A_FAVOR", id : 1, description : "Falta a favor"},
   {name : "FALTA_EN_CONTRA", id : 2, description : "Falta en contra"},
   {name : "PENALTY_A_FAVOR", id : 3, description : "Penalti a favor"},

@@ -1,6 +1,6 @@
 package es.usal.coaching.repositories;
 
-import java.util.List;
+import java.util.Collection;
 
 
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +17,7 @@ public interface CoachRepository extends CrudRepository<Coach, Long>{
 
     
 
-    List<Match> findAllMatchByCod(String cod);
+    Collection<Match> findAllMatchByCod(String cod);
 
     Coach findByCod(String userCod);
 

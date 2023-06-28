@@ -9,9 +9,11 @@ public class CoachEntityToDTOMapper {
         CoachDTO coachDTO = new CoachDTO();
         coachDTO.setCod(coach.getCod());
         coachDTO.setName(coach.getName());
+        coachDTO.setSurname(coach.getSurname());
         coachDTO.setDni(coach.getDni());
         coachDTO.setEmail(coach.getEmail());
         coachDTO.setTeam(TeamEntityToDTOMapper.parser(coach.getTeam()));
+        coachDTO.setImgSrc(coachDTO.getImgSrc());
 
 
         return coachDTO;

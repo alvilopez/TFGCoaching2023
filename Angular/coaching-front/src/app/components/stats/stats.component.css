@@ -1,0 +1,17 @@
+.selected-row {
+  background-color: #cfe2ff !important;
+}
+
+table {
+  width: 100%;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+tr:nth-child(even) {
+  background-color: #f8f9f0;
+}
+
+th, td {
+  text-align: center;
+}
+

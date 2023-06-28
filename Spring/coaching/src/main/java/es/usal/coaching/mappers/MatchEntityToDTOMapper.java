@@ -11,6 +11,7 @@ public class MatchEntityToDTOMapper {
     public static MatchDTO parser(Match match) {
         MatchDTO matchDTO = new MatchDTO();
 
+        matchDTO.setId(match.getId());
         matchDTO.setDate(match.getDate());
         matchDTO.setMatchNum(match.getMatchNum());
         matchDTO.setVideo(match.getVideo());

@@ -1,0 +1,6 @@
+Añadir foto a cada jugador
+Estadísticas de cada jugador
+Jugadores y datos en pantallas
+tfgs.salesmendes.com
+
+Corregir Extends y añadir casos de uso

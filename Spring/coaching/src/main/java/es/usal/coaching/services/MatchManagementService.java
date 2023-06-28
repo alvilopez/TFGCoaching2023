@@ -1,6 +1,7 @@
 package es.usal.coaching.services;
 
-import java.util.List;
+import java.io.File;
+import java.util.Collection;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,20 +11,24 @@ import es.usal.coaching.dtos.MatchDTO;
 
 public interface MatchManagementService {
 
-    List<MatchDTO> getMatchs(String userCod);
+    Collection<MatchDTO> getMatchs(String userCod);
 
     MatchDTO addMatch(MatchDTO request, String string);
 
     MatchDTO updateMatch(MatchDTO request);
 
-    MatchDTO deleteMatch(String request);
+    MatchDTO deleteMatch(Long request);
 
-    ActionDTO addAction(ActionDTO request, String matchCod);
+    ActionDTO addAction(ActionDTO request, Long id);
 
-    String addMatchVideo(MultipartFile file, String username);
+    String addMatchVideo(MultipartFile file, String username, Long id);
 
     Resource loadVideo(String video);
 
     void splitVideo(String videoCod, String userName);
+
+    ActionDTO deleteAction(Long id);
+    
+    ActionDTO obtenerFotoDeVideo(Long id);
 
 }

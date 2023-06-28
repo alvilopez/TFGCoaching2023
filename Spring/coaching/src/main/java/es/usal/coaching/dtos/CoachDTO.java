@@ -5,10 +5,14 @@ public class CoachDTO {
     private String cod;
     
     private String name;
+    private String surname;
     private String dni;
     private String email;
 
     private TeamDTO team;
+    private String imgSrc;
+
+    
 
     public CoachDTO(){};
 
@@ -18,6 +22,14 @@ public class CoachDTO {
         this.dni = dni;
         this.email = email;
         this.team = team;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getCod() {
@@ -60,6 +72,13 @@ public class CoachDTO {
         this.team = team;
     }
 
+    public String getImgSrc() {
+        return imgSrc;
+    }
+
+    public void setImgSrc(String imgSrc) {
+        this.imgSrc = imgSrc;
+    }
     
     
 }

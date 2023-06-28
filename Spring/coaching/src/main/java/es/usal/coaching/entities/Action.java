@@ -18,19 +18,32 @@ public class Action {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    private Integer min;
+    private Long min;
+
+    @ManyToOne
+    private Match match;    
 
     @Enumerated(EnumType.STRING)
     private ActionTypeEnum type;
+    
+    private String imgSrc;
 
     @ManyToOne
     private Player player;
 
-    public Integer getMin() {
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public Long getMin() {
         return min;
     }
 
-    public void setMin(Integer min) {
+    public void setMin(Long min) {
         this.min = min;
     }
 
@@ -60,6 +73,16 @@ public class Action {
         this.id = id;
     }
 
+    public String getImgSrc() {
+        return imgSrc;
+    }
+
+    public void setImgSrc(String imgSrc) {
+        this.imgSrc = imgSrc;
+    }
+
+    
+    
     
 
 

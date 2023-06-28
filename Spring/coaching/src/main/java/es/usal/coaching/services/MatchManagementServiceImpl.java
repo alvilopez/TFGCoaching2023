@@ -2,17 +2,27 @@ package es.usal.coaching.services;
 
 
 import java.io.File;
-
-
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import java.util.List;
-import java.util.Random;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,17 +41,19 @@ import es.usal.coaching.repositories.ActionRepository;
 import es.usal.coaching.repositories.CoachRepository;
 import es.usal.coaching.repositories.MatchRepository;
 import es.usal.coaching.repositories.PlayerRepository;
-import es.usal.coaching.repositories.TeamRepository;
 import es.usal.coaching.security.entity.Coach;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.probe.FFmpegFormat;
 
 
 
 @Service
 public class MatchManagementServiceImpl implements MatchManagementService {
+
+    private final Path root = Paths.get("resources/videos");
 
     @Autowired
     MatchRepository matchRepository;
@@ -59,13 +71,14 @@ public class MatchManagementServiceImpl implements MatchManagementService {
     FilesStorageService storageService;
 
     @Autowired
-    TeamRepository teamRepository;
+    TeamManagementService teamManagementService;
+    
 
     @Override
-    public List<MatchDTO> getMatchs(String userCod) {
+    public Collection<MatchDTO> getMatchs(String userCod) {
 
-        List<MatchDTO> response = new ArrayList<MatchDTO>();
-        List<Match> usersMatches = new ArrayList<Match>();
+        Collection<MatchDTO> response = new ArrayList<MatchDTO>();
+        Collection<Match> usersMatches = new ArrayList<Match>();
 
         try {
             Coach coach = coachRepository.findByNameUsuario(userCod);
@@ -88,14 +101,14 @@ public class MatchManagementServiceImpl implements MatchManagementService {
         Match matchToSave = new Match();
 
         try {
-            matchToSave.setCod("MATCH" + request.getVideo());
+            matchToSave.setCod("MATCH_" + StringUtils.right( UUID.randomUUID().toString(), 10));
             matchToSave.setMatchNum(request.getMatchNum());
             matchToSave.setVideo(request.getVideo());
             matchToSave.setDate(request.getDate());
             Coach coach = coachRepository.findByNameUsuario(userCod);
             matchToSave.setLocalTeam(coach.getTeam());
-            request.getVisitantTeam().setCod(request.getVideo().toString() + "visit");
-            Team visitantTeam = teamRepository.save(TeamDTOToEntityMapper.parser(request.getVisitantTeam()));
+            request.getVisitantTeam().setCod("VT_" + StringUtils.right( UUID.randomUUID().toString(), 10));
+            Team visitantTeam = TeamDTOToEntityMapper.parser(teamManagementService.addTeam(request.getVisitantTeam(), userCod));
             matchToSave.setVisitantTeam(visitantTeam);
             matchToSave.setActions(new ArrayList<Action>());
 
@@ -111,9 +124,8 @@ public class MatchManagementServiceImpl implements MatchManagementService {
     public MatchDTO updateMatch(MatchDTO request) {
         MatchDTO response = new MatchDTO();
         try {
-            Long id = matchRepository.findIdByCod(request.getCod());
             Match toUpdate = MatchDTOToEntityMapper.parser(request);
-            toUpdate.setId(id);
+            toUpdate.setId(request.getId());
             response = MatchEntityToDTOMapper.parser(matchRepository.save(toUpdate));
         } catch (Exception e) {
             return null;
@@ -122,22 +134,11 @@ public class MatchManagementServiceImpl implements MatchManagementService {
     }
 
     @Override
-    public MatchDTO deleteMatch(String request) {
+    public MatchDTO deleteMatch(Long request) {
 
         try {
-            Match toDelete = matchRepository.findByCod(request);
-
-            List<Long> ids = new ArrayList<Long>();
-
-            for (Action a : toDelete.getActions()) {
-                ids.add(a.getId());
-            }
-
-            if (!ids.isEmpty()) {
-                actionRepository.deleteAllById(ids);
-            }
-
-            matchRepository.delete(toDelete);
+            Optional<Match> toDelete = matchRepository.findById(request);
+            matchRepository.delete(toDelete.get());
             return new MatchDTO();
 
         } catch (Exception e) {
@@ -147,15 +148,16 @@ public class MatchManagementServiceImpl implements MatchManagementService {
     }
 
     @Override
-    public ActionDTO addAction(ActionDTO request, String matchCod) {
+    public ActionDTO addAction(ActionDTO request, Long id) {
         ActionDTO response = new ActionDTO();
         Action toSave = ActionDTOToEntityMapper.parser(request);
         try {
+            Optional<Match> matchToSave = matchRepository.findById(id);
             toSave.setPlayer(playerRepository.findByDni(toSave.getPlayer().getDni()));
             toSave = actionRepository.save(toSave);
-            Match matchToSave = matchRepository.findByCod(matchCod);
-            matchToSave.getActions().add(toSave);
-            matchRepository.save(matchToSave);
+            
+            matchToSave.get().getActions().add(toSave);
+            matchRepository.save(matchToSave.get());
             response = ActionEntityToDTOMapper.parser(toSave);
         } catch (Exception e) {
             return null;
@@ -164,28 +166,25 @@ public class MatchManagementServiceImpl implements MatchManagementService {
         return response;
     }
 
-    public Resource loadVideo(String video) {
+    public Resource loadVideo(String video) {        
         return storageService.load(video);
     }
 
     @Override
-    public String addMatchVideo(MultipartFile file, String username) {
+    public String addMatchVideo(MultipartFile file, String username, Long id) {
         Path path = Path.of("/resources/videos/" + username);
-
-        Integer i = new Random().nextInt(10000000);
-        while (new File(path + i.toString()).exists())
-            i = new Random().nextInt(10000000);
 
         try {
             storageService.save(file, username,
-                    "MATCH" + i.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename()));
+                    "MATCH" + id.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename()));
         } catch (Exception e) {
             return null;
         }
 
-        return i.toString();
-
+        return id.toString();
     }
+        
+
 
     @Override
     public void splitVideo(String cod, String userName) {
@@ -202,11 +201,11 @@ public class MatchManagementServiceImpl implements MatchManagementService {
                 File path = new File("resources");
                 
 
-                Integer t = a.getMin();
+                Long t = a.getMin();
                 Integer i = 1;
                 String videos ="/videos";
                 String username = "/" + userName;
-                String match = "/" + cod;
+                String match = "/MATCH_" + cod;
 
                 File splitDirectory = new File(path.getAbsolutePath() + videos + username + "/split" + match + "/");
 
@@ -217,7 +216,7 @@ public class MatchManagementServiceImpl implements MatchManagementService {
 
                 FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(path.getAbsolutePath() + videos + username + match + ".mp4")
-                .addExtraArgs("-ss", Integer.toString(t-10))
+                .addExtraArgs("-ss", Long.toString(t-10))
                 .addExtraArgs("-t", Integer.toString(20))
                 .addOutput(splitDirectory + "/" + a.getType() + i.toString() + ".mp4")
                 .done();
@@ -235,5 +234,93 @@ public class MatchManagementServiceImpl implements MatchManagementService {
        
         
     
+    }
+
+    @Override
+    public ActionDTO deleteAction(Long id) {
+        Optional<Action> actionToDelete = actionRepository.findById(id);
+
+        Match match = matchRepository.findByActions(actionToDelete);
+        match.getActions().remove(actionToDelete.get());
+        actionToDelete.get().setMatch(null);
+        matchRepository.save(match);
+        actionRepository.delete(actionToDelete.get());
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+
+        StringBuilder img = new StringBuilder()
+            .append(root)
+            .append(File.separator)
+            .append(username)
+            .append(File.separator)
+            .append(actionToDelete.get().getImgSrc());
+
+        File archivo = new File(img.toString());
+        
+        // Verificar si el archivo existe
+        if (archivo.exists()) {
+            // Intentar eliminar el archivo
+            if (archivo.delete()) {
+                System.out.println("Archivo eliminado exitosamente.");
+            } else {
+                System.out.println("No se pudo eliminar el archivo.");
+            }
+        } else {
+            System.out.println("El archivo no existe en la ruta especificada.");
+        }
+
+
+
+        actionRepository.delete(actionToDelete.get());
+
+
+        return ActionEntityToDTOMapper.parser(actionToDelete.get());
+    }
+
+
+    @Override
+    public ActionDTO obtenerFotoDeVideo(Long id) {
+        Optional<Action> photoAction = actionRepository.findById(id);
+        Match match = matchRepository.findByActions(photoAction);
+        
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+
+        String userPath = "/videos/" + username;
+        String videoFilePath = "/MATCH" + match.getId().toString() + ".mp4";
+        String photoName = "IMG_"+ photoAction.get().getId() +"_MATCH_"+ match.getId().toString() + ".jpg";
+
+        try{
+                File pathMpeg = new File("resources/ffmpeg.exe");
+                File pathMprobe = new File("resources/ffmpeg.exe");
+                FFmpeg ffmpeg = new FFmpeg(pathMpeg.getAbsolutePath());
+                FFprobe ffprobe = new FFprobe(pathMprobe.getAbsolutePath());
+                File path = new File("resources/" + userPath);
+                
+
+                FFmpegBuilder builder = new FFmpegBuilder().setInput(path.getAbsolutePath() + videoFilePath)
+                .addOutput(path.getAbsolutePath() + "/" + photoName)
+                .setFrames(1)
+                .setStartOffset(photoAction.get().getMin(), TimeUnit.SECONDS)
+                .done();
+
+                FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
+
+                executor.createJob(builder).run();
+
+                photoAction.get().setImgSrc(photoName);
+                actionRepository.save(photoAction.get());
+                return ActionEntityToDTOMapper.parser(photoAction.get());    
+                
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+            return null;
+
     }
 }

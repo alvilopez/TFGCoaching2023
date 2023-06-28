@@ -4,17 +4,12 @@ import java.util.ArrayList;
 
 public class TeamDTO {
 
-    
+    private Long id;
     private String cod;
-
     private String name;
     private String category;
-
-    
-    private ArrayList<PlayerDTO> players;
-
-
-    
+    private Boolean principal;    
+    private ArrayList<PlayerDTO> players;    
 
     public TeamDTO(String cod, String name, String category, ArrayList<PlayerDTO> players) {
         this.cod = cod;
@@ -24,6 +19,16 @@ public class TeamDTO {
     }
 
 
+    public Long getId() {
+        return id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
     public TeamDTO() {
     }
 
@@ -67,5 +72,16 @@ public class TeamDTO {
         this.players = players;
     }
 
+
+    public Boolean getPrincipal() {
+        return principal;
+    }
+
+
+    public void setPrincipal(Boolean principal) {
+        this.principal = principal;
+    }
+
+    
     
 }

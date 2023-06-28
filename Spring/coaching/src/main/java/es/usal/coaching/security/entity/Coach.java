@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import es.usal.coaching.entities.Team;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ public class Coach {
     private int id;
     @NotNull
     private String name;
+    @NotNull 
+    private String surname;
     @NotNull
     @Column(unique = true)
     private String nameUsuario;
@@ -22,6 +25,13 @@ public class Coach {
     private String email;
     @NotNull
     private String password;
+    
+    private String imgSrc;
+    
+    
+
+
+
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"),
@@ -36,6 +46,9 @@ public class Coach {
     
     @OneToOne
     private Team team;
+
+    @OneToMany
+    private Collection<Team> rivalTeams;
 
     public Coach() {
     }
@@ -143,5 +156,36 @@ public class Coach {
         this.team = team;
     }
 
+
+
+    public Collection<Team> getRivalTeams() {
+        return rivalTeams;
+    }
+
+
+
+    public void setRivalTeams(Collection<Team> rivalTeams) {
+        this.rivalTeams = rivalTeams;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getImgSrc() {
+        return imgSrc;
+    }
+
+
+
+    public void setImgSrc(String imgSrc) {
+        this.imgSrc = imgSrc;
+    }
     
 }

@@ -9,9 +9,11 @@ public class CoachDTOToEntityMapper {
         Coach coach = new Coach();
         coach.setCod(coachDTO.getCod());
         coach.setName(coachDTO.getName());
+        coach.setSurname(coachDTO.getSurname());
         coach.setDni(coachDTO.getDni());
         coach.setEmail(coachDTO.getEmail());
         coach.setTeam(TeamDTOToEntityMapper.parser(coachDTO.getTeam()));
+        coach.setImgSrc(coachDTO.getImgSrc());
 
         return coach;
     }

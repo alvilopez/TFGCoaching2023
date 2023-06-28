@@ -1,10 +1,15 @@
 package es.usal.coaching.entities;
 
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 
 @Entity
 public class Player{
@@ -24,8 +29,7 @@ public class Player{
 
     @Column(nullable = false)
     private String number;
-
-    @Column(nullable = false)
+    
     private String position;
     
     private String email;
@@ -33,6 +37,8 @@ public class Player{
     private Float weight;
     private Float hight;
     
+    @OneToMany(cascade = CascadeType.REMOVE , orphanRemoval = true)
+    private Collection<Action> actions;
 
     
 

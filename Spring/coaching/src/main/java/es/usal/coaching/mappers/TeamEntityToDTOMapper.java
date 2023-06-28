@@ -12,6 +12,7 @@ public class TeamEntityToDTOMapper {
     public static TeamDTO parser(Team team) {
         TeamDTO teamDTO = new TeamDTO();
 
+        teamDTO.setId(team.getId());
         teamDTO.setCategory(team.getCategory());
         teamDTO.setCod(team.getCod());
         teamDTO.setName(team.getName());
@@ -22,8 +23,8 @@ public class TeamEntityToDTOMapper {
                 teamDTO.getPlayers().add(PlayerEntityToDTOMapper.parser(p));
             }
         }
-        
-            
+        teamDTO.setPrincipal(teamDTO.getPrincipal());
+          
         return teamDTO;
     }
     

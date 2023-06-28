@@ -3,6 +3,7 @@ package es.usal.coaching.entities;
 import java.sql.Date;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,10 +21,8 @@ public class Match {
 
     @Column(unique = true)
     private String cod;
-
+    
     private Date date;
-    
-    
     private Integer matchNum;
     private String video;
 
@@ -33,7 +32,7 @@ public class Match {
     @OneToOne
     private Team visitantTeam;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Action> actions;
 
     

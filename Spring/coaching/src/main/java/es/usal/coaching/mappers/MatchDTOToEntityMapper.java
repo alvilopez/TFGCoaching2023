@@ -6,7 +6,8 @@ import es.usal.coaching.entities.Match;
 public class MatchDTOToEntityMapper {
     public static Match parser(MatchDTO matchDTO) {
         Match match = new Match();
-
+        
+        match.setId(matchDTO.getId());
         match.setDate(matchDTO.getDate());
         match.setMatchNum(matchDTO.getMatchNum());
         match.setVideo(matchDTO.getVideo());
@@ -19,6 +20,7 @@ public class MatchDTOToEntityMapper {
 
     public static Match change(Match match, MatchDTO matchDTO){
         
+        match.setId(matchDTO.getId());
         match.setDate(matchDTO.getDate());
         match.setMatchNum(matchDTO.getMatchNum());
         match.setVideo(matchDTO.getVideo());

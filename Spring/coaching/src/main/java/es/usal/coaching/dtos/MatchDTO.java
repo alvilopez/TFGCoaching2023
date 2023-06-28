@@ -1,13 +1,23 @@
 package es.usal.coaching.dtos;
 
 import java.sql.Date;
-import java.util.List;
+import java.util.Collection;
 
 
 
 public class MatchDTO {
     
     
+    private Long id;
+    public Long getId() {
+        return id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     private Date date;
     private Integer matchNum;
@@ -17,7 +27,7 @@ public class MatchDTO {
     private TeamDTO localTeam;
     private TeamDTO visitantTeam;
 
-    private List<ActionDTO> actions;
+    private Collection<ActionDTO> actions;
 
 
     
@@ -75,12 +85,12 @@ public class MatchDTO {
     }
 
 
-    public List<ActionDTO> getActions() {
+    public Collection<ActionDTO> getActions() {
         return actions;
     }
 
 
-    public void setActions(List<ActionDTO> actions) {
+    public void setActions(Collection<ActionDTO> actions) {
         this.actions = actions;
     }
 

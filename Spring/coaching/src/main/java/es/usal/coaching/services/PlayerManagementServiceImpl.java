@@ -2,16 +2,20 @@ package es.usal.coaching.services;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
+import java.util.Collection;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.PlayerDTO;
 import es.usal.coaching.entities.Action;
 import es.usal.coaching.entities.Player;
+import es.usal.coaching.entities.Team;
 import es.usal.coaching.mappers.ActionEntityToDTOMapper;
 import es.usal.coaching.mappers.PlayerDTOToEntityMapper;
 import es.usal.coaching.mappers.PlayerEntityToDTOMapper;
@@ -36,10 +40,10 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
     ActionRepository actionRepository;
 
     @Override
-    public List<PlayerDTO> getPlayers(String username) {
+    public Collection<PlayerDTO> getPlayers(String username) {
 
         Coach coach = coachRepository.findByNameUsuario(username);
-        List<PlayerDTO> response = new ArrayList<PlayerDTO>();
+        Collection<PlayerDTO> response = new ArrayList<PlayerDTO>();
         for(Player p : coach.getTeam().getPlayers()){
             
             response.add(PlayerEntityToDTOMapper.parser(p));
@@ -48,15 +52,24 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
     }
 
     @Override
-    public PlayerDTO addPlayer(PlayerDTO request, String nameUsuario) {
+    public PlayerDTO addPlayer(PlayerDTO request, Long teamId) {
         Player response;
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                        .getPrincipal();
+        String username = userDetails.getUsername();
 
         try{
             response = playerRepository.save(PlayerDTOToEntityMapper.parser(request));
+            if(teamId == 0){
+                Coach coach = coachRepository.findByNameUsuario(username);
+                coach.getTeam().getPlayers().add(response);
+                teamRepository.save(coach.getTeam());
+            }else{
+                Optional<Team> teamToAddPlayer = teamRepository.findById(teamId);
+                teamToAddPlayer.get().getPlayers().add(response);             
+                teamRepository.save(teamToAddPlayer.get());
+            }
 
-            Coach coach = coachRepository.findByNameUsuario(nameUsuario);
-            coach.getTeam().getPlayers().add(response);
-            teamRepository.save(coach.getTeam());
             return PlayerEntityToDTOMapper.parser(response);
         } catch (Exception e){
             return null;
@@ -91,7 +104,7 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
         coach.getTeam().getPlayers().remove(playerToDelete);
         teamRepository.save(coach.getTeam());
 
-        List<Action> actions = actionRepository.findAllByPlayerId(playerToDelete.getId());
+        Collection<Action> actions = actionRepository.findAllByPlayerId(playerToDelete.getId());
         if(!actions.isEmpty()){
             for (Action action : actions) {
                 action.setPlayer(null);
@@ -107,14 +120,14 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
     }
 
     @Override
-    public List<ActionDTO> getStats(String nameUsuario) {
+    public Collection<ActionDTO> getStats(String nameUsuario) {
         // TODO Auto-generated method stub
         
         
 
-        // List<Object[]> result = playerRepository.getStats(ids);
+        // Collection<Object[]> result = playerRepository.getStats(ids);
 
-        // List<StatDTO> response = new ArrayList<>();
+        // Collection<StatDTO> response = new ArrayList<>();
         // String antPlayer = null;
         // StatDTO stat = null;
         // for (Object[] o : result) {
@@ -136,17 +149,17 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
         // }
 
         // response.add(stat);
-        List<ActionDTO> response = new ArrayList<>();
+        Collection<ActionDTO> response = new ArrayList<>();
 
         Coach coach = coachRepository.findByNameUsuario(nameUsuario);
         
-        List<Long> ids = new ArrayList<>();
+        Collection<Long> ids = new ArrayList<>();
 
         for( Player p : coach.getTeam().getPlayers()){
              ids.add(p.getId());
         }
 
-        List<Action> result = actionRepository.findAllByPlayerIdIn(new HashSet<>(ids));
+        Collection<Action> result = actionRepository.findAllByPlayerIdIn(new HashSet<>(ids));
 
         for (Action action : result) {
             response.add(ActionEntityToDTOMapper.parser(action));

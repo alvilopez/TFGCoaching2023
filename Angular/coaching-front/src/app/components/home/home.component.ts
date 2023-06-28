@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +21,9 @@ export class HomeComponent implements OnInit {
 
 
 
+  @Input()
   isLogged = false;
+
   isLoginFail = false;
   loginUsuario!: LoginUsuario;
   nombreUsuario!: string;
@@ -30,6 +32,7 @@ export class HomeComponent implements OnInit {
   errMsj!: string;
   nuevoUsuario!: NuevoUsuario;
   nombre!: string;
+  apellidos!: string;
   email!: string;
   dni!: string;
   team! : Team;
@@ -63,7 +66,7 @@ export class HomeComponent implements OnInit {
         this.roles = data.authorities;
 
 
-        this.router.navigate(['/']);
+        this.router.navigate(['/coach']);
       },
       (      err: { error: { message: string; }; }) => {
         this.isLogged = false;
@@ -76,7 +79,22 @@ export class HomeComponent implements OnInit {
 
   onRegister(): void {
 
-    this.nuevoUsuario = new NuevoUsuario(this.nombre, this.nombreUsuario, this.email, this.password, this.dni, new Team(this.teamName, this.category, "T" + this.dni));
+    this.nuevoUsuario = {
+      name: this.nombre,
+      surname: this.apellidos,
+      cod: "C" + this.dni,
+      dni: this.dni,
+      email: this.email,
+      nameUsuario: this.nombreUsuario,
+      password: "",
+      team:{
+        category: this.category,
+        name: this.teamName,
+        cod: "T" + this.dni,
+        players: []
+      }
+    };
+
     this.authService.nuevo(this.nuevoUsuario).subscribe(
       data => {
 

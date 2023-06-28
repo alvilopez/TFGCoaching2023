@@ -1,7 +1,7 @@
 import { Player } from "./player/player";
 
 export class Team{
-    cod : string;
+    cod? : string;
 
     name : string;
     category : string;

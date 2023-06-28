@@ -1,29 +1,27 @@
 package es.usal.coaching.controllers;
 
-import java.util.List;
+import java.util.Collection;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.PlayerDTO;
-import es.usal.coaching.enums.RolNombre;
 import es.usal.coaching.services.PlayerManagementService;
 
 
-@Controller
+@RestController
 public class PlayerManagementController {
 
     @Autowired
@@ -31,12 +29,12 @@ public class PlayerManagementController {
     
     
     @GetMapping(value="/player")
-    public ResponseEntity<List<PlayerDTO>> getPlayers() {
+    public ResponseEntity<Collection<PlayerDTO>> getPlayers() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername();
 
-        List<PlayerDTO> response = playerManagementService.getPlayers(username);
+        Collection<PlayerDTO> response = playerManagementService.getPlayers(username);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }else{
@@ -44,13 +42,10 @@ public class PlayerManagementController {
         }
     }
    
-    @PostMapping(value="/player")
-    public ResponseEntity<PlayerDTO> addPlayer(@RequestBody PlayerDTO request){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                        .getPrincipal();
-        String username = userDetails.getUsername();
+    @PostMapping(value="/player/{teamId}")
+    public ResponseEntity<PlayerDTO> addPlayer(@PathVariable Long teamId, @RequestBody PlayerDTO request){
         
-        PlayerDTO response = playerManagementService.addPlayer(request, username);
+        PlayerDTO response = playerManagementService.addPlayer(request, teamId);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }else{
@@ -80,11 +75,11 @@ public class PlayerManagementController {
     }
     
     @GetMapping(value = "player/getStats")
-    public ResponseEntity<List<ActionDTO>> getStats(){
+    public ResponseEntity<Collection<ActionDTO>> getStats(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername();
-        List<ActionDTO> response = playerManagementService.getStats(username);
+        Collection<ActionDTO> response = playerManagementService.getStats(username);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }else{

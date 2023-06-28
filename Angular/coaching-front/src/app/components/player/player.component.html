@@ -40,20 +40,7 @@
   </div>
 </div>
 
-<div #tableStats>
-  <table class="table table-bordered" style="width:100%" *ngIf="players.length > 0" >
-    <tr>
-      <th>Jugador</th>
-      <th *ngFor="let a of ACTIONS">{{a.description}}</th>
-    </tr>
-    <tr *ngFor="let p of players">
-      <th>{{p.name}} {{p.surname}}</th>
-      <td *ngFor="let a of ACTIONS">{{selectStat(p.dni, a.name)}}</td>
-    </tr>
-    <button type="button " (click)="onOpenModal(nullPlayer, 'excel')" class="btn btn-primary btn-lg" data-dismiss="modal" aria-label="Close">GenerarExcel </button>
-  </table>
 
-</div>
 
 
 <!-- Formulario para añadir un nuevo usuario-->

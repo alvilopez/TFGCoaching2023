@@ -23,6 +23,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { interceptorProvider, InterceptorService } from './components/interceptors/interceptor.service';
 import { CoachComponent } from './components/coach/coach.component';
+import { RivalTeamsComponent } from './components/rival-teams/rival-teams.component';
+import { StatsComponent } from './components/stats/stats.component';
 
 
 
@@ -37,7 +39,10 @@ import { CoachComponent } from './components/coach/coach.component';
     HomeComponent,
     AnalysisComponent,
     CoachComponent,
-    CoachComponent
+    CoachComponent,
+    RivalTeamsComponent,
+    StatsComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
@@ -51,8 +56,6 @@ import { CoachComponent } from './components/coach/coach.component';
     MaterialExampleModule,
     ReactiveFormsModule,
     AppRoutingModule,
-
-
   ],
   providers : [interceptorProvider],
   bootstrap: [AppComponent]

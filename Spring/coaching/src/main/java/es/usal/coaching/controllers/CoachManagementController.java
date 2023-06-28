@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.usal.coaching.security.entity.Coach;
-import es.usal.coaching.security.entity.UsuarioPrincipal;
 import es.usal.coaching.security.repository.UsuarioRepository;
 import es.usal.coaching.services.CoachManagementService;
 

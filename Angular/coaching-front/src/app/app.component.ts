@@ -5,6 +5,7 @@ import { PlayerService } from './components/player/player.service';
 import { NgForm } from '@angular/forms';
 import { identifierName } from '@angular/compiler';
 import { TokenService } from './components/service/token.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,12 +21,16 @@ export class AppComponent implements OnInit{
   public isLogged! : boolean;
 
   constructor(private playerService: PlayerService,
-    private tokenService: TokenService){
+    private tokenService: TokenService,
+    private router: Router){
 
-      this.componentsMap.set("home", true);
+    this.router.navigate(['/coach']);
+    this.componentsMap.set("home", true);
     this.componentsMap.set("players", false);
     this.componentsMap.set("matches", false);
     this.componentsMap.set("analysis", false);
+    this.componentsMap.set("rivalTeams", false);
+    this.componentsMap.set("stats", false);
     }
 
   ngOnInit(): void {
@@ -43,6 +48,8 @@ export class AppComponent implements OnInit{
     screensMap.set('home', document.getElementById('home')!);
     screensMap.set('players', document.getElementById('pestañaPlayers')!);
     screensMap.set('matches', document.getElementById('pestañaMatches')!);
+    screensMap.set('rivalTeams', document.getElementById('pestañaRivalTeams')!);
+    screensMap.set('stats', document.getElementById('pestañaStats')!);
 
     screensMap.forEach((value: HTMLElement, key: string) => {
       if (key == mode) {value.classList.add('current');}

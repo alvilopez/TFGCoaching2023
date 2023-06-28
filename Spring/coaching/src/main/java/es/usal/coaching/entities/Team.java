@@ -2,7 +2,7 @@ package es.usal.coaching.entities;
 
 import java.util.Collection;
 
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +21,8 @@ public class Team {
 
     private String name;
     private String category;
-
-    @OneToMany
+    
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Player> players;
 
     
@@ -76,6 +76,5 @@ public class Team {
     public void setId(Long id) {
         this.id = id;
     }
-
     
 }

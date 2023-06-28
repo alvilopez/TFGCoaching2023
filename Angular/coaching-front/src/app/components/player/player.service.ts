@@ -21,14 +21,14 @@ export class PlayerService {
   }
 
   public addPlayer(player: Player) : Observable<Player>{
-    return this.http.post<Player>(`${this.apiServerUrl}/player`, player);
+    return this.http.post<Player>(`${this.apiServerUrl}/player/0`, player);
   }
 
-  public updatePlayer(player: Player) : Observable<Player>{
+  public updatePlayer(player: Player | undefined) : Observable<Player>{
     return this.http.put<Player>(`${this.apiServerUrl}/player`, player);
   }
 
-  public deletePlayer(dni: string) : Observable<Player>{
+  public deletePlayer(dni: string | undefined) : Observable<Player>{
     return this.http.delete<Player>(`${this.apiServerUrl}/player/${dni}`);
   }
 
