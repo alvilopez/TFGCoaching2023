@@ -1,6 +1,5 @@
 package es.usal.coaching.services;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.springframework.core.io.Resource;
@@ -30,5 +29,11 @@ public interface MatchManagementService {
     ActionDTO deleteAction(Long id);
     
     ActionDTO obtenerFotoDeVideo(Long id);
+
+    MatchDTO notificarJugadores(MatchDTO matchDTO);
+
+    Collection<MatchDTO> getMatchsForPlayer(String hash);
+
+    
 
 }

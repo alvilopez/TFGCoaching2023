@@ -63,6 +63,7 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/video/**").permitAll();
         http.authorizeRequests().antMatchers("/files/**/{fileName:.+}").permitAll();
+        http.authorizeRequests().antMatchers("/match/player/**").permitAll();
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()

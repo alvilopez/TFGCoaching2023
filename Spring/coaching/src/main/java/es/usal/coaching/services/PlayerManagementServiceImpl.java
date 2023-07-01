@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import es.usal.coaching.dtos.ActionDTO;
@@ -24,6 +25,8 @@ import es.usal.coaching.repositories.CoachRepository;
 import es.usal.coaching.repositories.PlayerRepository;
 import es.usal.coaching.repositories.TeamRepository;
 import es.usal.coaching.security.entity.Coach;
+
+
 @Service
 public class PlayerManagementServiceImpl implements PlayerManagementService {
 
@@ -38,6 +41,10 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
 
     @Autowired
     ActionRepository actionRepository;
+    
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
 
     @Override
     public Collection<PlayerDTO> getPlayers(String username) {
@@ -59,7 +66,9 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
         String username = userDetails.getUsername();
 
         try{
-            response = playerRepository.save(PlayerDTOToEntityMapper.parser(request));
+            Player playerToSave = PlayerDTOToEntityMapper.parser(request);
+            playerToSave.setHashString(passwordEncoder.encode(request.getEmail()));
+            response = playerRepository.save(playerToSave);
             if(teamId == 0){
                 Coach coach = coachRepository.findByNameUsuario(username);
                 coach.getTeam().getPlayers().add(response);

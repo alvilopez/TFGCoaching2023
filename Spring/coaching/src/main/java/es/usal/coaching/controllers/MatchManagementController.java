@@ -7,10 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
@@ -20,14 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.mime.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,12 +29,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import ch.qos.logback.core.joran.action.Action;
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.MatchDTO;
 import es.usal.coaching.services.MatchManagementService;
@@ -211,5 +200,25 @@ public class MatchManagementController {
         return new ResponseEntity<ActionDTO>(response, HttpStatus.OK);
         
     }
+
+    @PostMapping(value = "/match/email")
+    public ResponseEntity<MatchDTO> enviarEmailConDatosJugadores(@RequestBody MatchDTO match){
+
+        MatchDTO response = matchManagementService.notificarJugadores(match);
+
+        return new ResponseEntity<MatchDTO>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/match/player/{hash}")
+    public ResponseEntity<Collection<MatchDTO>> getMatchsForPlayer(@PathVariable String hash) {
+
+        Collection<MatchDTO> response = matchManagementService.getMatchsForPlayer(hash);
+        if(response !=null){
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        }else{
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
     
 }

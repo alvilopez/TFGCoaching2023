@@ -70,7 +70,7 @@
 
 <!-- Coloca este código al final del archivo -->
 <div class="popup" *ngIf="popupVisible" (click)="closePopup()">
-  <img [src]="popupImageSrc" alt="Popup Image">
+  <app-photo-editor [imageUrl]="popupImageSrc ? popupImageSrc : '' " class="row" ></app-photo-editor>
 </div>
 
 </div>

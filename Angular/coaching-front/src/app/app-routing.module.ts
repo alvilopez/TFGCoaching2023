@@ -10,12 +10,14 @@ import { StatsComponent } from './components/stats/stats.component';
 import { AnalysisComponent } from './components/analysis/analysis.component';
 
 const routes: Routes = [
+  { path: 'personal/:playerHash', component: MatchComponent},
+  { path: 'match', component: MatchComponent },
   { path: 'players', component: PlayerComponent },
   { path: 'match', component: MatchComponent },
   { path: 'analysis', component: AnalysisComponent },
   { path: 'coach', component: CoachComponent },
   { path: 'rivalTeams', component: RivalTeamsComponent},
-  { path: 'stats', component: StatsComponent}
+  { path: 'stats', component: StatsComponent},
 
 ];
 

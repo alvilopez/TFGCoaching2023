@@ -12,27 +12,23 @@
 
 <body>
 
-    <!-- Header -->
-    <div id="header">
-      <h1>
-        <a id="logo">Coaching</a>
-        <em> By Alvaro López</em>
-      </h1>
 
       <!-- Nav -->
       <nav id="nav">
         <ul>
-          <li id ="home" class="current"><a  type="button" (click)="onOpenModal('home')" data-dismiss="modal" routerLink="/coach" >Perfil</a></li>
-          <li id="pestañaPlayers"><a  type="button" (click)="onOpenModal('players')" routerLink="/players" data-dismiss="modal"  >Plantilla</a></li>
-          <li id="pestañaMatches"><a  type="button" (click)="onOpenModal('matches')" data-dismiss="modal" routerLink="/match"  >Partidos </a></li>
-          <li id="pestañaRivalTeams"><a  type="button" (click)="onOpenModal('rivalTeams')" data-dismiss="modal" routerLink="/rivalTeams"  >Equipos Rivales </a></li>
-          <li id="pestañaStats"><a  type="button" (click)="onOpenModal('stats')" data-dismiss="modal" routerLink="/stats"  >Estadísticas</a></li>
+          <li *ngIf="!isLogged" id ="welcome" class="current"><a  type="button" (click)="onOpenModal('welcome')" routerLink="" data-dismiss="modal"> Bienvenida </a></li>
+          <li *ngIf="!isLogged" id ="home"><a type="button" (click)="onOpenModal('home')" data-dismiss="modal">Iniciar Sesión</a></li>
+          <li *ngIf="isLogged" id="pestañaCoach"><a  type="button" (click)="onOpenModal('coach')" routerLink="/coach" data-dismiss="modal"  >Perfil</a></li>
+          <li *ngIf="isLogged" id="pestañaPlayers"><a  type="button" (click)="onOpenModal('players')" routerLink="/players" data-dismiss="modal"  >Plantilla</a></li>
+          <li *ngIf="isLogged" id="pestañaMatches"><a  type="button" (click)="onOpenModal('matches')" data-dismiss="modal" routerLink="/match"  >Partidos </a></li>
+          <!-- <li *ngIf="isLogged" id="pestañaRivalTeams"><a  type="button" (click)="onOpenModal('rivalTeams')" data-dismiss="modal" routerLink="/rivalTeams"  >Equipos Rivales </a></li> -->
+          <li *ngIf="isLogged" id="pestañaStats"><a  type="button" (click)="onOpenModal('stats')" data-dismiss="modal" routerLink="/stats"  >Estadísticas</a></li>
         </ul>
       </nav>
 
-    </div>
+      <app-home (cambioVariable)="manejarCambioVariable($event)" *ngIf="mostrarLogin"></app-home>
+      <app-welcome *ngIf="mostrarWelcome"> </app-welcome>
 
-      <app-home></app-home>
       <router-outlet></router-outlet>
   </body>
 

@@ -25,6 +25,8 @@ import { interceptorProvider, InterceptorService } from './components/intercepto
 import { CoachComponent } from './components/coach/coach.component';
 import { RivalTeamsComponent } from './components/rival-teams/rival-teams.component';
 import { StatsComponent } from './components/stats/stats.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { PhotoEditorComponent } from './components/photo-editor/photo-editor.component';
 
 
 
@@ -42,7 +44,9 @@ import { StatsComponent } from './components/stats/stats.component';
     CoachComponent,
     RivalTeamsComponent,
     StatsComponent,
-    StatsComponent
+    StatsComponent,
+    WelcomeComponent,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserModule,

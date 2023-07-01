@@ -21,5 +21,7 @@ public interface PlayerRepository extends CrudRepository<Player, Long>{
     @Query(value = "select name, surname, a.type, count(*) from coachingbd.action as a JOIN coachingbd.player as p ON p.id = a.player_id WHERE p.id in (:ids) group by TYPE HAVING count(*);" , nativeQuery = true)
     Collection<Object[]> getStats(Collection<Long> ids);
 
+    Player findByHashString(String hash);
+
     
 }

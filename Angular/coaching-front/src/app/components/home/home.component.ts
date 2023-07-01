@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 
 
   @Input()
-  isLogged = false;
+  isLogged? : boolean;
 
   isLoginFail = false;
   loginUsuario!: LoginUsuario;
@@ -38,6 +38,9 @@ export class HomeComponent implements OnInit {
   team! : Team;
   teamName! : string;
   category! : string;
+
+  @Output()
+  cambioVariable = new EventEmitter<boolean>();
 
   constructor(
     private tokenService: TokenService,
@@ -59,14 +62,11 @@ export class HomeComponent implements OnInit {
     this.authService.login(this.loginUsuario).subscribe(
       (      data: { token: any; nombreUsuario: string; authorities: string[]; }) => {
         this.isLogged = true;
-
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
         this.tokenService.setAuthorities(data.authorities);
         this.roles = data.authorities;
-
-
-        this.router.navigate(['/coach']);
+        this.cambioVariable.emit(this.isLogged);
       },
       (      err: { error: { message: string; }; }) => {
         this.isLogged = false;
@@ -75,6 +75,8 @@ export class HomeComponent implements OnInit {
         // console.log(err.error.message);
       }
     );
+
+
   }
 
   onRegister(): void {

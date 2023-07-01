@@ -2,12 +2,9 @@ package es.usal.coaching.services;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,12 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -28,9 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.MatchDTO;
+import es.usal.coaching.email.EmailService;
 import es.usal.coaching.entities.Action;
-
 import es.usal.coaching.entities.Match;
+import es.usal.coaching.entities.Player;
 import es.usal.coaching.entities.Team;
 import es.usal.coaching.mappers.ActionDTOToEntityMapper;
 import es.usal.coaching.mappers.ActionEntityToDTOMapper;
@@ -41,12 +35,12 @@ import es.usal.coaching.repositories.ActionRepository;
 import es.usal.coaching.repositories.CoachRepository;
 import es.usal.coaching.repositories.MatchRepository;
 import es.usal.coaching.repositories.PlayerRepository;
+import es.usal.coaching.repositories.TeamRepository;
 import es.usal.coaching.security.entity.Coach;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
-import net.bramp.ffmpeg.probe.FFmpegFormat;
 
 
 
@@ -72,6 +66,12 @@ public class MatchManagementServiceImpl implements MatchManagementService {
 
     @Autowired
     TeamManagementService teamManagementService;
+
+    @Autowired
+    EmailService emailService;
+    
+    @Autowired
+    TeamRepository teamRepository;
     
 
     @Override
@@ -323,4 +323,47 @@ public class MatchManagementServiceImpl implements MatchManagementService {
             return null;
 
     }
+
+    @Override
+    public MatchDTO notificarJugadores(MatchDTO match) {
+        
+        Optional<Match> matchEntity = matchRepository.findById(match.getId());
+
+        emailService.sendMatchInfoToPlayer(matchEntity.get());
+
+        return match;
+    }
+
+    @Override
+    public Collection<MatchDTO> getMatchsForPlayer(String hash) {
+        Collection<MatchDTO> response = new ArrayList<MatchDTO>();
+        
+        try {
+            Player player = playerRepository.findByHashString(hash);
+            Team team = teamRepository.findByPlayers(player);
+            Collection<Match> partidos = matchRepository.findByLocalTeam(team);
+            
+            for(Match match : partidos){
+                MatchDTO matchDTO = new MatchDTO();
+                matchDTO.setDate(match.getDate());
+                matchDTO.setMatchNum(match.getMatchNum());
+                matchDTO.setVideo(match.getVideo());
+                matchDTO.setActions(new ArrayList<>());
+                for(Action a : match.getActions()){
+                    if(a.getPlayer().getId() == player.getId()){
+                        matchDTO.getActions().add(ActionEntityToDTOMapper.parser(a));
+                    }
+                }
+                response.add(matchDTO);
+            }
+            
+            
+        } catch (Exception e) {
+            return null;
+        }
+
+        return response;
+    }
+
+    
 }

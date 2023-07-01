@@ -7,6 +7,7 @@ import { Match } from './match';
 import { MatchService } from './match.service';
 import { Team } from '../team';
 import { Player } from '../player/player';
+import { ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-match',
@@ -30,9 +31,11 @@ export class MatchComponent implements OnInit {
   idMatchVideoPendiente? : number;
   progress : number = 0;
   matchVideoInProgress? : number;
+  playerHash?: string | null;
 
   constructor(private matchService: MatchService,
-    private tokenService: TokenService){
+    private tokenService: TokenService,
+    private router: ActivatedRoute){
 
     }
 
@@ -42,9 +45,13 @@ export class MatchComponent implements OnInit {
 
       this.getMatches();
     } else {
-      this.isLogged = false;
+      this.playerHash = this.router.snapshot.paramMap.get('id');
+      this.getMatchesForPlayer(this.playerHash);
     }
 
+  }
+  getMatchesForPlayer(playerHash: string | null) {
+    throw new Error('Method not implemented.');
   }
 
   public getMatches(): void {

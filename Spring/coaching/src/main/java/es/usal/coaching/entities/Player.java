@@ -37,6 +37,9 @@ public class Player{
     private Float weight;
     private Float hight;
     
+    private String hashString;
+    
+    
     @OneToMany(cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<Action> actions;
 
@@ -59,7 +62,13 @@ public class Player{
 
 
     
-
+    public String getHashString() {
+        return hashString;
+    }
+    public void setHashString(String hashString) {
+        this.hashString = hashString;
+    }
+    
     public String getName() {
         return name;
     }
