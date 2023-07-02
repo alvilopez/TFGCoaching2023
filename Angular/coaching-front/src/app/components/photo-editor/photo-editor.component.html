@@ -1,11 +1,16 @@
-<div class="canvas-wrapper">
-  <img [src]="imageUrl" [hidden]="!imageUrl" #imageElement>
+<div class="canvas-wrapper text-center">
+  <img [src]="imageUrl" [hidden]="!imageUrl" #imageElement crossorigin="anonymous">
   <canvas #canvas id="canvas" (mousedown)="startDrawing($event)" (mousemove)="draw($event)" (mouseup)="endDrawing()"></canvas>
+
+  <button type="button" class="col-2 btn-sm btn-danger"  (click)="cerrarPopUp.emit()">
+    <span class="btn-label"><i class="fa fa-remove"></i></span>
+  </button>
+
 </div>
 
-<!-- <input type="color" [(ngModel)]="strokeColor">
 
-<button (click)="downloadImage()">Descargar imagen</button>
+
+<!-- <button (click)="downloadImage()">Descargar imagen</button>
 <button (click)="shareOnSocialMedia()">Compartir en redes sociales</button> -->
 
 

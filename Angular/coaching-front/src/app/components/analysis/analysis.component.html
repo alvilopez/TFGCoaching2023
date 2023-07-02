@@ -69,8 +69,8 @@
 
 
 <!-- Coloca este código al final del archivo -->
-<div class="popup" *ngIf="popupVisible" (click)="closePopup()">
-  <app-photo-editor [imageUrl]="popupImageSrc ? popupImageSrc : '' " class="row" ></app-photo-editor>
+<div class="popup" *ngIf="popupVisible" >
+  <app-photo-editor [imageUrl]="popupImageSrc ? popupImageSrc : '' " class="row" (cerrarPopUp)="closePopup()" ></app-photo-editor>
 </div>
 
 </div>

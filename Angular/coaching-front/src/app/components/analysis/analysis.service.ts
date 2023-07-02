@@ -10,6 +10,7 @@ import { Observable, map } from 'rxjs';
 })
 export class AnalysisService {
 
+
   private apiServerUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient,
@@ -39,5 +40,9 @@ export class AnalysisService {
 
   public deleteAction(action : Action){
     return this.http.delete<Action>(`${this.apiServerUrl}/match/action/${action.id}`)
+  }
+
+  uploadCombinedImage(formData: FormData) {
+    return this.http.post<any>(`${this.apiServerUrl}/match/action/`, formData)
   }
 }
