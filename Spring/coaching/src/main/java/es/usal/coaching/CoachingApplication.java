@@ -4,10 +4,6 @@ import java.util.Arrays;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
 public class CoachingApplication {
@@ -16,21 +12,18 @@ public class CoachingApplication {
 		SpringApplication.run(CoachingApplication.class, args);
 	}
 
-	@Bean
-	public CorsFilter corsFilter() {
-		CorsConfiguration corsConfiguration = new CorsConfiguration();
-		corsConfiguration.setAllowCredentials(true);
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:4201"));
-		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
-				"Accept", "Authorization", "Origin, Accept", "X-Requested-With",
-				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
-		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization",
-				"Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-		return new CorsFilter(urlBasedCorsConfigurationSource);
-	}
+	// @Bean
+	// public CorsFilter corsFilter() {
+	// 	CorsConfiguration config = new CorsConfiguration();
+    //     config.addAllowedOrigin("http://localhost:4200"); // Cambia esta URL por el dominio de tu aplicación Angular
+    //     config.addAllowedMethod("*");
+    //     config.addAllowedHeader("*");
+    //     config.setAllowCredentials(true); 
+
+	// 	UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+	// 	urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", config);
+	// 	return new CorsFilter(urlBasedCorsConfigurationSource);
+	// }
 
 	
 }

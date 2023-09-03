@@ -2,11 +2,8 @@ import { Player } from "./player/player";
 
 export class Team{
     cod? : string;
-
     name : string;
     category : string;
-
-
     players : Player[];
 
 

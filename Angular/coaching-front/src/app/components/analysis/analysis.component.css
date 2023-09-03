@@ -68,11 +68,15 @@ list-group{
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
 }
 
 .popup img {
   max-width: 80%;
   max-height: 80%;
   border-radius: 5px;
+}
+
+.popup-content {
+  /* Establece un ancho máximo para el contenido del pop-up si es necesario */
+  max-width: 80%;
 }

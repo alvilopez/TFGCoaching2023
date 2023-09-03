@@ -3,9 +3,9 @@ import { Player } from "./player/player";
 export class Action{
     id? : number
     min! : number;
-    type! : String;
+    type! : string;
     player! : Player;
-    imgSrc? : String;
+    imgSrc? : string;
 
     constructor(){}
 

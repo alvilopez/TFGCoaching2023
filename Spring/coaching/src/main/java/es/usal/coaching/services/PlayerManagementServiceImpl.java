@@ -5,12 +5,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Collection;
 
-
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.PlayerDTO;
@@ -45,6 +46,9 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    FilesStorageService storageService;
+
 
     @Override
     public Collection<PlayerDTO> getPlayers(String username) {
@@ -59,25 +63,20 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
     }
 
     @Override
-    public PlayerDTO addPlayer(PlayerDTO request, Long teamId) {
+    public PlayerDTO addPlayer(PlayerDTO request) {
         Player response;
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername();
-
+        
         try{
             Player playerToSave = PlayerDTOToEntityMapper.parser(request);
             playerToSave.setHashString(passwordEncoder.encode(request.getEmail()));
             response = playerRepository.save(playerToSave);
-            if(teamId == 0){
-                Coach coach = coachRepository.findByNameUsuario(username);
-                coach.getTeam().getPlayers().add(response);
-                teamRepository.save(coach.getTeam());
-            }else{
-                Optional<Team> teamToAddPlayer = teamRepository.findById(teamId);
-                teamToAddPlayer.get().getPlayers().add(response);             
-                teamRepository.save(teamToAddPlayer.get());
-            }
+            
+            Coach coach = coachRepository.findByNameUsuario(username);
+            coach.getTeam().getPlayers().add(response);
+            teamRepository.save(coach.getTeam());            
 
             return PlayerEntityToDTOMapper.parser(response);
         } catch (Exception e){
@@ -174,6 +173,27 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
             response.add(ActionEntityToDTOMapper.parser(action));
         }
         return response;
+    }
+
+    @Override
+    public void uploadImage(MultipartFile imgFile, Long playerId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                        .getPrincipal();
+        String username = userDetails.getUsername();
+        String fileName = "IMG_Player_" + playerId.toString() + "." + FilenameUtils.getExtension(imgFile.getOriginalFilename());
+        try {
+            Coach coach = coachRepository.findByNameUsuario(username);
+            for(Player p : coach.getTeam().getPlayers()){
+                if(p.getId().equals(playerId)){
+                    p.setImgName(fileName);
+                    playerRepository.save(p);
+                }
+            }
+            storageService.save(imgFile, username, fileName);
+        } catch (Exception e) {         
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'uploadImage'");
+        }
     }
     
 

@@ -9,6 +9,7 @@ import { Team } from '../team';
 import { TokenService } from '../service/token.service';
 
 import * as XLSX from "xlsx";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-player',
@@ -25,13 +26,14 @@ export class PlayerComponent {
   public toUpdatePlayer!: Player;
   public actions!: Action[];
   public isLogged! : boolean;
+  cacheBuster: number = 0;
+
+  public selectedImage: File | undefined;
 
   constructor(private playerService: PlayerService,
     private tokenService: TokenService){
 
     }
-
-
 
 
 
@@ -60,10 +62,33 @@ export class PlayerComponent {
 
   public onAddPlayer(addForm: NgForm): void {
     document.getElementById('add-player-form')!.click();
-    this.playerService.addPlayer(addForm.value).subscribe(
+
+
+    const player : Player = {
+      name: addForm.value.name,
+      surname: addForm.value.surname,
+      email: addForm.value.email,
+      number: addForm.value.number,
+      position: addForm.value.position,
+      age: addForm.value.age,
+      weight: addForm.value.weight,
+      hight: addForm.value.hight,
+      dni: addForm.value.dni
+    }
+
+    this.playerService.addPlayer(player).subscribe(
       (response: Player) => {
+        if(this.selectedImage != undefined && response.id != undefined){
+          this.playerService.loadPlayerImg(this.selectedImage, response.id).subscribe(
+            response => {
+              this.getPlayers();
+            }
+          );
+        }else{
+          this.getPlayers();
+        }
+
         console.log(response);
-        this.getPlayers();
         addForm.reset();
       },
       (error: HttpErrorResponse) => {
@@ -71,13 +96,31 @@ export class PlayerComponent {
         addForm.reset();
       }
     );
+
+  }
+
+  handleImageInput(event: any) {
+    this.selectedImage = event.target.files[0];
   }
 
   public onUpdatePlayer(player: Player): void {
     this.playerService.updatePlayer(player).subscribe(
       (response: Player) => {
         console.log(response);
-        this.getPlayers();
+        if(this.selectedImage != null && this.toUpdatePlayer.id != undefined){
+          this.playerService.loadPlayerImg(this.selectedImage, this.toUpdatePlayer.id).subscribe(
+            response => {
+              this.getPlayers();
+              });
+          this.players.forEach(player => {
+            if(player.id == response.id){
+              player.imgName = player.imgName + "?" + this.cacheBuster++;
+            }
+          })
+
+        }else{
+          this.getPlayers();
+        }
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
@@ -110,6 +153,7 @@ export class PlayerComponent {
       button.setAttribute('data-target', '#addPlayerModal');
     }
     if (mode === 'update') {
+      this.selectedImage = undefined;
       this.toUpdatePlayer = player;
       button.setAttribute('data-target', '#updatePlayerModal');
     }
@@ -144,6 +188,11 @@ export class PlayerComponent {
       }
     }
     return contador;
+  }
+
+  public loadPlayerImage(imgName: string) : string {
+    const response : string =  environment.apiBaseUrl + "/files/" + this.tokenService.getUserName() + "/" + imgName;
+    return response;
   }
 
 }

@@ -9,4 +9,6 @@ export interface Player{
     weight?: number;
     hight?: number;
     dni?: string;
+    id?: number;
+    imgName?: string;
 }

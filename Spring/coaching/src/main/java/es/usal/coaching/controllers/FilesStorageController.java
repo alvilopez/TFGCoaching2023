@@ -17,14 +17,13 @@ import java.io.IOException;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = {"Authorization"})
 public class FilesStorageController {
 
     @Autowired
     FilesStorageService filesStorageService;
 
-    @GetMapping("/files/{username}/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @PathVariable String username) throws IOException {
+     @GetMapping("/assets/{fileName:.+}")
+    public ResponseEntity<Resource> assetFile(@PathVariable String fileName, @PathVariable String username) throws IOException {
         
         StringBuilder build = new StringBuilder(username)
             .append(File.separatorChar)
@@ -32,6 +31,27 @@ public class FilesStorageController {
 
         Resource resource = filesStorageService.load(build.toString());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + resource.getFilename() + "\"").body(resource);
+    }
+
+
+    @GetMapping("/files/{username}/{fileName:.+}")
+    @CrossOrigin
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @PathVariable String username) throws IOException {
+       
+        
+        StringBuilder build = new StringBuilder(username)
+            .append(File.separatorChar)
+            .append(fileName);
+
+            HttpHeaders headers = new HttpHeaders();
+            // Configura las cabeceras CORS permitidas
+            headers.set("Access-Control-Allow-Origin", "*");
+            headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+            headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+        Resource resource = filesStorageService.load(build.toString());
+        
+        return ResponseEntity.ok().headers(headers).body(resource);
     }
 }
 

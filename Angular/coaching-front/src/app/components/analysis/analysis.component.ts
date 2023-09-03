@@ -24,7 +24,7 @@ import { map } from 'rxjs';
 
 export class AnalysisComponent implements OnInit{
 
-  actionTypes = ActionTypes.ACTION_TYPES;
+  actionTypes = ActionTypes;
   base64Image: any;
   actionToShowPhoto? : Action;
 
@@ -156,7 +156,9 @@ export class AnalysisComponent implements OnInit{
   }
 
 
-
+  public devolverDescByName(name : string){
+    return ActionTypes.ACTION_TYPES.find(item => item.name == name)?.description;
+  }
 
 
 }

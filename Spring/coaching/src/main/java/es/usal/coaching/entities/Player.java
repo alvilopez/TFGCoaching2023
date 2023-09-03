@@ -38,8 +38,16 @@ public class Player{
     private Float hight;
     
     private String hashString;
+
+    private String imgName;
     
     
+    public String getImgName() {
+        return imgName;
+    }
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
     @OneToMany(cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<Action> actions;
 

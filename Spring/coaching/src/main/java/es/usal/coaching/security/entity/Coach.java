@@ -55,9 +55,10 @@ public class Coach {
 
     
 
-    public Coach(@NotNull String name, @NotNull String nameUsuario, @NotNull String email, @NotNull String password,
+    public Coach(@NotNull String name, @NotNull String surname, @NotNull String nameUsuario, @NotNull String email, @NotNull String password,
             String cod, String dni, Team team) {
         this.name = name;
+        this.surname = surname;
         this.nameUsuario = nameUsuario;
         this.email = email;
         this.password = password;

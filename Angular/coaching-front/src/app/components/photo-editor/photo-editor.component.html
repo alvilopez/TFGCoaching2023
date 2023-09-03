@@ -1,9 +1,13 @@
 <div class="canvas-wrapper text-center">
-  <img [src]="imageUrl" [hidden]="!imageUrl" #imageElement crossorigin="anonymous">
+  <!-- <img [src]="imageUrl" [hidden]="!imageUrl" #imageElement crossorigin="anonymous"> -->
   <canvas #canvas id="canvas" (mousedown)="startDrawing($event)" (mousemove)="draw($event)" (mouseup)="endDrawing()"></canvas>
 
   <button type="button" class="col-2 btn-sm btn-danger"  (click)="cerrarPopUp.emit()">
     <span class="btn-label"><i class="fa fa-remove"></i></span>
+  </button>
+
+  <button type="button" class="col-2 btn-sm btn-primary"  (click)="generateCombinedImage()">
+    <span class="btn-label"><i class="fa fa-save"></i></span>
   </button>
 
 </div>

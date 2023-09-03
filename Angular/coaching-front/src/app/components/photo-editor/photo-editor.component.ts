@@ -14,7 +14,6 @@ export class PhotoEditorComponent implements OnInit {
   @Output()
   cerrarPopUp = new EventEmitter<boolean>();
 
-  @ViewChild('imageElement', { static: true }) imageElement!: ElementRef;
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
 
   drawing = false;
@@ -75,43 +74,40 @@ export class PhotoEditorComponent implements OnInit {
   generateCombinedImage() {
     const canvas: HTMLCanvasElement = this.canvas.nativeElement;
     const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-    const image: HTMLImageElement = this.imageElement.nativeElement;
 
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = canvas.width;
     combinedCanvas.height = canvas.height;
 
-    const combinedContext = combinedCanvas.getContext('2d') ;
-    combinedContext?.drawImage(image, 0, 0);
+    const combinedContext = combinedCanvas.getContext('2d');
     combinedContext?.drawImage(canvas, 0, 0);
 
-    combinedContext?.canvas.toDataURL('image.png');
+    const imageDataURL = combinedCanvas.toDataURL('image/jpeg'); // Cambiar a 'image/jpeg'
 
-    const imageDataURL = combinedCanvas.toDataURL('image/png');
-
-  // Hacer algo con la cadena base64, como mostrarla en una imagen
-  const imgElement = document.createElement('img');
-  imgElement.src = imageDataURL;
-  document.body.appendChild(imgElement);
-
-
+    // Descargar la imagen combinada como archivo JPG
+    const blob = this.dataURItoBlob(imageDataURL);
+    saveAs(blob, 'combined_image.jpg');
   }
 
+  dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
 
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: mimeString });
+  }
 
 }
 
 
 
 
-// downloadImage() {
-//   html2canvas(this.canvas).then((canvas) => {
-//     canvas.toBlob((blob) => {
-//       if(blob!=null)
-//       saveAs(blob, 'drawing.png');
-//     });
-//   });
-// }
+
 
 // shareOnSocialMedia() {
 //   html2canvas(this.canvas).then((canvas) => {

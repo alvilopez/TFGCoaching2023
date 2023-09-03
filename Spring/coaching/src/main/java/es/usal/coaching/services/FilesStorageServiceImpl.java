@@ -3,9 +3,11 @@ package es.usal.coaching.services;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
   private final Path root = Paths.get("resources/videos");
+  private final Path assets = Paths.get("assets");
   @Override
   public void init() {
     try {
@@ -27,10 +30,14 @@ public class FilesStorageServiceImpl implements FilesStorageService {
   @Override
   public void save(MultipartFile file, String userCod, String fileName) {
     try {
-      File directory = new File(root.toString()+"/"+userCod);
+      File directory = new File(root.toString()+"/"+ userCod);
       if(!directory.exists())
       Files.createDirectories(root.resolve(userCod));
-      Files.copy(file.getInputStream(), this.root.resolve(userCod).resolve(fileName));
+
+      CopyOption[] options = new CopyOption[] {
+            StandardCopyOption.REPLACE_EXISTING, // Para reemplazar el destino si ya existe
+        };
+      Files.copy(file.getInputStream(), this.root.resolve(userCod).resolve(fileName), options);
     } catch (Exception e) {
       throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
     }
@@ -50,6 +57,24 @@ public class FilesStorageServiceImpl implements FilesStorageService {
       throw new RuntimeException("Error: " + e.getMessage());
     }
   }
+
+  @Override
+  public Resource loadAsset(String filename) {
+    
+    try {
+      Path file = assets.resolve(filename);
+      Resource resource = new UrlResource(file.toUri());
+      if (resource.exists() || resource.isReadable()) {
+        return resource;
+      } else {
+        throw new RuntimeException("Could not read the file!");
+      }
+    } catch (MalformedURLException e) {
+      throw new RuntimeException("Error: " + e.getMessage());
+    }
+  }
+
+
   @Override
   public void deleteAll() {
     FileSystemUtils.deleteRecursively(root.toFile());

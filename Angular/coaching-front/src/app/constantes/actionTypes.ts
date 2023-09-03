@@ -14,4 +14,6 @@ export class ActionTypes{
     {name : "GOL_EN_CONTRA", id : 12, description : "Gol en contra"},
     {name : "PARADA", id :13, description : "Parada"}
   ];
+
+
 }

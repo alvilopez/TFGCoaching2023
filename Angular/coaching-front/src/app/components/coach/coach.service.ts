@@ -16,4 +16,12 @@ export class CoachService {
   public getUser(userName: string) : Observable<NuevoUsuario>{
     return this.http.get<any>(`${this.apiServerUrl}/coach/${userName}`);
   }
+
+  public uploadImage(file: File) : any{
+    const formData: FormData = new FormData();
+    if(file != undefined)
+    formData.append('file', file);
+
+    return this.http.post(`${this.apiServerUrl}/coach/img`, formData);
+  }
 }

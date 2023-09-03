@@ -7,9 +7,10 @@
     <div *ngFor="let player of players" class="col-md-6 col-xl-3">
       <div class="card m-b-30">
         <div class="card-body row">
-          <!--<div class="col-6">
-              <a href=""><img src="{{player?.imageUrl}}" alt="" class="img-fluid rounded-circle w-60"></a>
-           </div>-->
+
+           <div class="col-6">
+              <img [src]="player.imgName ? loadPlayerImage(player.imgName) : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'" class="img-fluid rounded-circle w-60">
+           </div>
           <div class="col-6 card-title align-self-center mb-0">
             <h5>{{player?.name}} {{player?.surname}}</h5>
             <p class="m-0">{{player?.position}}</p>
@@ -93,6 +94,10 @@
             <label for="dni">Dni</label>
             <input type="text" ngModel name="dni" class="form-control" id="dni" placeholder="Dni" required>
           </div>
+          <div class="form-group">
+            <label for="image">Fotografía</label>
+            <input type="file" class="form-control" id="image" placeholder="Imagen" (change)="handleImageInput($event)">
+          </div>
           <div class="modal-footer">
             <button type="button" id="add-player-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
@@ -121,7 +126,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete Player {{toDeletePlayer.name}}?</p>
+        <p>Are you sure you want to delete Player {{toDeletePlayer?.name}}?</p>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
           <button (click)="onDeletePlayer(toDeletePlayer.dni)" class="btn btn-danger" data-dismiss="modal">Yes</button>
@@ -138,7 +143,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="updatePlayerModalLabel">Edit Player {{toUpdatePlayer.name}}</h5>
+        <h5 class="modal-title" id="updatePlayerModalLabel">Edit Player {{toUpdatePlayer?.name}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -147,45 +152,49 @@
         <form #editForm="ngForm">
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" ngModel="{{toUpdatePlayer.name}}" name="name" class="form-control" id="name"
+            <input type="text" ngModel="{{toUpdatePlayer?.name}}" name="name" class="form-control" id="name"
               aria-describedby="emailHelp" placeholder="Name">
           </div>
           <div class="form-group">
             <label for="surname">Surname</label>
-            <input type="text" ngModel="{{toUpdatePlayer.surname}}" name="surname" class="form-control" id="surname"
+            <input type="text" ngModel="{{toUpdatePlayer?.surname}}" name="surname" class="form-control" id="surname"
               aria-describedby="emailHelp" placeholder="Name">
           </div>
-          <input type="hidden" ngModel="{{toUpdatePlayer.dni}}" name="dni" class="form-control" id="dni"
+          <input type="hidden" ngModel="{{toUpdatePlayer?.dni}}" name="dni" class="form-control" id="dni"
             placeholder="Dni">
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" ngModel="{{toUpdatePlayer.email}}" name="email" class="form-control" id="email"
+            <input type="email" ngModel="{{toUpdatePlayer?.email}}" name="email" class="form-control" id="email"
               placeholder="Email">
           </div>
           <div class="form-group">
             <label for="number">Number</label>
-            <input type="text" ngModel="{{toUpdatePlayer.number}}" name="number" class="form-control" id="number"
+            <input type="text" ngModel="{{toUpdatePlayer?.number}}" name="number" class="form-control" id="number"
               placeholder="Number">
           </div>
           <div class="form-group">
             <label for="age">Edad</label>
-            <input type="number" ngModel="{{toUpdatePlayer.weight}}" name="age" class="form-control" id="age"
+            <input type="number" ngModel="{{toUpdatePlayer?.weight}}" name="age" class="form-control" id="age"
               name="age" placeholder="Age">
           </div>
           <div class="form-group">
             <label for="weight">Peso</label>
-            <input type="number" ngModel="{{toUpdatePlayer.weight}}" name="weight" class="form-control" id="weight"
+            <input type="number" ngModel="{{toUpdatePlayer?.weight}}" name="weight" class="form-control" id="weight"
               name="weight" placeholder="Weight">
           </div>
           <div class="form-group">
             <label for="hight">Altura</label>
-            <input type="number" ngModel="{{toUpdatePlayer.hight}}" name="hight" class="form-control" id="hight"
+            <input type="number" ngModel="{{toUpdatePlayer?.hight}}" name="hight" class="form-control" id="hight"
               placeholder="Hight">
           </div>
           <div class="form-group">
             <label for="position">Posicion</label>
-            <input type="text" ngModel="{{toUpdatePlayer.position}}" name="position" class="form-control" id="position"
+            <input type="text" ngModel="{{toUpdatePlayer?.position}}" name="position" class="form-control" id="position"
               placeholder="Position">
+          </div>
+          <div class="form-group">
+            <label for="image">Fotografía</label>
+            <input type="file" class="form-control" id="image" placeholder="Imagen" (change)="handleImageInput($event)">
           </div>
           <div class="modal-footer">
             <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>

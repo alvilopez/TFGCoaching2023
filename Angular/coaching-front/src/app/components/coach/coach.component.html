@@ -46,11 +46,21 @@
         <div class="col-lg-4">
           <div class="card mb-4">
             <div class="card-body text-center">
-              <img [src]="user.imgSrc != null ? getFoto(user.imgSrc) : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'" alt="avatar"
+              <img  [src]="user.imgSrc != null ? profileImg : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"
                 class="rounded-circle img-fluid" style="width: 150px;">
-              <h5 class="my-3">{{user.nameUsuario}}</h5>
-              <p class="text-muted mb-1">Full Stack Developer</p>
-              <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+              <div class="card-body text-center">
+
+                <button type="button "  class="btn btn-primary btn-lg" (click)="openFileSelector()">Editar</button>
+                <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept="image/*">
+
+                <h2 class="my-3">{{user.nombreUsuario}}</h2>
+                <p class="text-muted mb-1">Entrenador</p>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <button type="button "  class="btn btn-danger btn-lg" (click)="logOut()">Cerrar Sesión</button>
             </div>
           </div>
 
@@ -60,10 +70,19 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Full Name</p>
+                  <p class="mb-0">Nombre</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{user.name}} {{user.surname}}</p>
+                  <p class="text-muted mb-0">{{user.nombre}} {{user.apellido}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Apellidos</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{user.apellido}}</p>
                 </div>
               </div>
               <hr>
@@ -78,54 +97,42 @@
               <hr>
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Phone</p>
+                  <p class="mb-0">Equipo</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">(097) 234-5678</p>
+                  <p class="text-muted mb-0">{{user.team.name}}</p>
                 </div>
               </div>
               <hr>
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Mobile</p>
+                  <p class="mb-0">Categoría</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">(098) 765-4321</p>
-                </div>
-              </div>
-              <hr>
-              <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Address</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                  <p class="text-muted mb-0">{{user.team.category}}</p>
                 </div>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col">
               <div class="card mb-4 mb-md-0">
                 <div class="card-body">
-                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                  </p>
-                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0"
-                      aria-valuemax="100"></div>
+                  <p class="mb-4"><span class="text-primary font-italic me-1">Uso de la aplicación</span>
+                  <!-- </p>
+                  <p class="mt-4 mb-1">Partidos Analizados</p>
+                    <div class="text-muted" style="font-size: .97rem;"
+                      aria-valuemax="100">Se han analizado X partidos.
+                    </div>
+                  <p class="mt-4 mb-1" >Acciones registradas</p>
+                  <div class="text-muted" style="font-size: .97rem;"
+                    aria-valuemax="100">El número de acciones registradas es {{obtenerAccionesTotales()}} acciones.
+                  </div> -->
+                  <p class="mt-4 mb-1">Número de jugadores en plantilla</p>
+                  <div class="text-muted" style="font-size: .97rem;"
+                    aria-valuemax="100">Actualmente la plantilla tiene {{user.team.players.length}} jugadores.
                   </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
+                  <!-- <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
                   <div class="progress rounded" style="height: 5px;">
                     <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0"
                       aria-valuemax="100"></div>
@@ -134,40 +141,7 @@
                   <div class="progress rounded mb-2" style="height: 5px;">
                     <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0"
                       aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card mb-4 mb-md-0">
-                <div class="card-body">
-                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                  </p>
-                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                  <div class="progress rounded" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                  <div class="progress rounded mb-2" style="height: 5px;">
-                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>

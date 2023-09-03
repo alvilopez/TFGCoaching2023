@@ -7,6 +7,7 @@ public class PlayerDTOToEntityMapper {
     public static Player parser(PlayerDTO playerDTO){
         Player player = new Player();
 
+        player.setId(playerDTO.getId());
         player.setAge(playerDTO.getAge());
         player.setDni(playerDTO.getDni());
         player.setEmail(playerDTO.getEmail());
@@ -16,6 +17,7 @@ public class PlayerDTOToEntityMapper {
         player.setPosition(playerDTO.getPosition());
         player.setSurname(playerDTO.getSurname());
         player.setWeight(playerDTO.getWeight());
+        player.setImgName(playerDTO.getImgName());
 
 
 

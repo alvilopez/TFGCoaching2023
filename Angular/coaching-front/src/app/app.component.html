@@ -11,20 +11,21 @@
 
 
 <body>
+        <nav id="nav">
 
-
-      <!-- Nav -->
-      <nav id="nav">
         <ul>
+          <li><img src="assets/CoachingLogo.png" style="vertical-align: middle;"></li>
           <li *ngIf="!isLogged" id ="welcome" class="current"><a  type="button" (click)="onOpenModal('welcome')" routerLink="" data-dismiss="modal"> Bienvenida </a></li>
           <li *ngIf="!isLogged" id ="home"><a type="button" (click)="onOpenModal('home')" data-dismiss="modal">Iniciar Sesión</a></li>
           <li *ngIf="isLogged" id="pestañaCoach"><a  type="button" (click)="onOpenModal('coach')" routerLink="/coach" data-dismiss="modal"  >Perfil</a></li>
           <li *ngIf="isLogged" id="pestañaPlayers"><a  type="button" (click)="onOpenModal('players')" routerLink="/players" data-dismiss="modal"  >Plantilla</a></li>
           <li *ngIf="isLogged" id="pestañaMatches"><a  type="button" (click)="onOpenModal('matches')" data-dismiss="modal" routerLink="/match"  >Partidos </a></li>
-          <!-- <li *ngIf="isLogged" id="pestañaRivalTeams"><a  type="button" (click)="onOpenModal('rivalTeams')" data-dismiss="modal" routerLink="/rivalTeams"  >Equipos Rivales </a></li> -->
           <li *ngIf="isLogged" id="pestañaStats"><a  type="button" (click)="onOpenModal('stats')" data-dismiss="modal" routerLink="/stats"  >Estadísticas</a></li>
+          <!-- <li style="position: fixed; right: 0;"></li> -->
         </ul>
       </nav>
+      <!-- Nav -->
+
 
       <app-home (cambioVariable)="manejarCambioVariable($event)" *ngIf="mostrarLogin"></app-home>
       <app-welcome *ngIf="mostrarWelcome"> </app-welcome>

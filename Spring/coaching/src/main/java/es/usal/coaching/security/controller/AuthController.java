@@ -57,7 +57,7 @@ public class AuthController {
         
         nuevoUsuario.getTeam().setPlayers(new ArrayList<Player>());
         Coach usuario =
-                new Coach(nuevoUsuario.getNombre(), nuevoUsuario.getNombreUsuario(), nuevoUsuario.getEmail(),
+                new Coach(nuevoUsuario.getNombre(), nuevoUsuario.getApellido(), nuevoUsuario.getNombreUsuario(), nuevoUsuario.getEmail(),
                         passwordEncoder.encode(nuevoUsuario.getPassword()), nuevoUsuario.getCod(), nuevoUsuario.getDni(), nuevoUsuario.getTeam());
         Set<Rol> roles = new HashSet<>();
         roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());

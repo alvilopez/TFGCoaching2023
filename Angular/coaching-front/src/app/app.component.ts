@@ -29,19 +29,25 @@ export class AppComponent implements OnInit{
     private router: Router,
     private cdr: ChangeDetectorRef){
 
-    if(!this.isLogged){
-      this.router.navigate(['coach']);
+    if(this.isLogged){
+      this.router.navigate(['']);
       this.mostrarWelcome = false;
+      this.componentsMap.set("welcome", true);
+      this.componentsMap.set("coach", false);
+    }else{
+      this.componentsMap.set("welcome", false);
+      this.componentsMap.set("coach", true);
     }
 
-    this.componentsMap.set("welcome", true);
+
     this.componentsMap.set("home", false);
     this.componentsMap.set("players", false);
     this.componentsMap.set("matches", false);
     this.componentsMap.set("analysis", false);
-    this.componentsMap.set("rivalTeams", false);
     this.componentsMap.set("stats", false);
-    this.componentsMap.set("coach", false);
+    this.componentsMap.set("rivalTeams", false);
+
+
     }
 
   ngOnInit(): void {
@@ -64,8 +70,10 @@ export class AppComponent implements OnInit{
       this.screensMap.set('coach', document.getElementById('pestañaCoach')!);
       this.screensMap.set('players', document.getElementById('pestañaPlayers')!);
       this.screensMap.set('matches', document.getElementById('pestañaMatches')!);
-      this.screensMap.set('rivalTeams', document.getElementById('pestañaRivalTeams')!);
       this.screensMap.set('stats', document.getElementById('pestañaStats')!);
+      this.screensMap.set('rivalTeams', document.getElementById('pestañaRivalTeams')!);
+
+      this.mostrarWelcome = false;
     }else{
       this.screensMap.set('welcome', document.getElementById('welcome')!);
       this.screensMap.set('home', document.getElementById('home')!);

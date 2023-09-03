@@ -1,7 +1,9 @@
 package es.usal.coaching.controllers;
 
 import java.util.Collection;
+import java.util.Optional;
 
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +16,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import es.usal.coaching.dtos.ActionDTO;
 import es.usal.coaching.dtos.PlayerDTO;
+import es.usal.coaching.security.entity.Coach;
 import es.usal.coaching.services.PlayerManagementService;
 
 
@@ -42,10 +48,10 @@ public class PlayerManagementController {
         }
     }
    
-    @PostMapping(value="/player/{teamId}")
-    public ResponseEntity<PlayerDTO> addPlayer(@PathVariable Long teamId, @RequestBody PlayerDTO request){
+    @PostMapping(value="/player")
+    public ResponseEntity<PlayerDTO> addPlayer(@RequestBody PlayerDTO playerDTO){
         
-        PlayerDTO response = playerManagementService.addPlayer(request, teamId);
+        PlayerDTO response = playerManagementService.addPlayer(playerDTO);
         if(response !=null){
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }else{
@@ -85,6 +91,14 @@ public class PlayerManagementController {
         }else{
             return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
         }
+    }
+
+    @PostMapping(value = "/player/img")
+    public ResponseEntity<Optional<Coach>> uploadImage(@RequestParam("file") MultipartFile imgFile, @RequestParam("playerId") String playerId){
+        playerManagementService.uploadImage(imgFile,  Long.parseLong(playerId));
+        
+        return new ResponseEntity<Optional<Coach>>(HttpStatus.OK);
+
     }
     
 }

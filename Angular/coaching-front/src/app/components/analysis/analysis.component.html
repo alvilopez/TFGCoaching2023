@@ -8,7 +8,7 @@
           <div class="list-group " *ngFor="let action of toAnalizeMatch.actions">
             <div class="row">
               <button class="list-group-item col-8" style="font-size:small;"
-                (click)="irAMinuto(action.min)">{{obtenerMin(action.min)}}': {{action.type}} -> {{action.player.name}} {{action.player.surname[0]}}.
+                (click)="irAMinuto(action.min)">{{obtenerMin(action.min)}}': {{devolverDescByName(action.type)}}. {{action.player.name}} {{action.player.surname[0]}}.
               </button>
               <button type="button" class="col-2 btn-sm btn-danger" (click)="deleteAction(action)">
                 <span class="btn-label"><i class="fa fa-remove"></i></span>
@@ -28,7 +28,7 @@
           <label for="type" style="font-size: medium;">Tipo de Acción: </label>
           <select id="type" ngModel name="type" class="form-control col-3 mr-auto ml-auto" required>
             <option selected> Ninguna </option>
-            <option *ngFor="let a of actionTypes" [value]="a.name" > {{a.description}} </option>
+            <option *ngFor="let a of actionTypes.ACTION_TYPES" [value]="a.name" > {{a.description}} </option>
           </select>
           <label for="jugador" style="font-size: medium;"> Jugador: </label>
           <select id="player" ngModel name="player" class="form-control col-2 mr-auto ml-auto" required>
@@ -58,7 +58,7 @@
   </div>
   <div class="row photos">
       <div *ngFor="let action of toAnalizeMatch.actions" class="col-sm-6 col-md-4 col-lg-3 item">
-        <h4 class="text-center"> {{action.type}} -> {{action.player.name}} {{action.player.surname[0]}}</h4>
+        <h4 class="text-center"> {{obtenerMin(action.min)}}': {{devolverDescByName(action.type)}}.{{action.player.name}} {{action.player.surname[0]}}</h4>
         <a *ngIf="action.imgSrc != null" data-lightbox="photos"><img class="img-fluid" [src]="getFoto(action.imgSrc)" (click)="openImgPopup(getFoto(action.imgSrc))"></a>
         <div class="progress" *ngIf="action.imgSrc == null">
           <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>

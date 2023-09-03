@@ -27,7 +27,7 @@ import { RivalTeamsComponent } from './components/rival-teams/rival-teams.compon
 import { StatsComponent } from './components/stats/stats.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { PhotoEditorComponent } from './components/photo-editor/photo-editor.component';
-
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -46,7 +46,9 @@ import { PhotoEditorComponent } from './components/photo-editor/photo-editor.com
     StatsComponent,
     StatsComponent,
     WelcomeComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+
+
   ],
   imports: [
     BrowserModule,
@@ -60,6 +62,7 @@ import { PhotoEditorComponent } from './components/photo-editor/photo-editor.com
     MaterialExampleModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    ToastrModule.forRoot()
   ],
   providers : [interceptorProvider],
   bootstrap: [AppComponent]

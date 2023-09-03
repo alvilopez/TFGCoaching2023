@@ -9,10 +9,10 @@
           <div class="card-header">
               <ul class="nav nav-tabs">
                   <li class="nav-item">
-                    <a class="nav-link active" style="color: black;" id="logInButton" routerLink="/login" (click)="onOpenModal('logIn')">Iniciar Sesión</a>
+                    <a class="nav-link active" style="color: black;" id="logInButton"  (click)="onOpenModal('logIn')">Iniciar Sesión</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" style="color: black;" id="signUpButton" routerLink="/registro" (click)="onOpenModal('signUp')">Crear Cuenta</a>
+                    <a class="nav-link" style="color: black;" id="signUpButton"  (click)="onOpenModal('signUp')">Crear Cuenta</a>
                   </li>
 
                 </ul>
@@ -78,6 +78,10 @@
                   <label for="category">Categoría del Equipo</label>
                   <input type="text" name="category" id="category" class="form-control"
                   [(ngModel)]="category" required>
+                </div>
+                <div class="form-group">
+                  <label for="category">Foto de Perfil</label>
+                  <input type="file" class="form-control" (change)="onFileSelected($event)">
                 </div>
 
 

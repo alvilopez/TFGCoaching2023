@@ -4,7 +4,7 @@ package es.usal.coaching.dtos;
 
 public class PlayerDTO {
     
-
+    private Long id;
     private String name;
     private String surname;
     private String number;
@@ -14,8 +14,29 @@ public class PlayerDTO {
     private Float weight;
     private Float hight;
     private String dni;
+    private String imgName;
 
-    
+    public Long getId() {
+        return id;
+    }
+
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getImgName() {
+        return imgName;
+    }
+
+
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
+
+
 
     public PlayerDTO( String name, String surname, String number, String position, String email, Integer age,
             Float weight, Float hight, String dni) {
