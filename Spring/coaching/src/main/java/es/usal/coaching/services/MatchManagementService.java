@@ -24,7 +24,7 @@ public interface MatchManagementService {
 
     Resource loadVideo(String video);
 
-    void splitVideo(String videoCod, String userName);
+    String splitVideo(String videoCod, String userName);
 
     ActionDTO deleteAction(Long id);
     

@@ -45,4 +45,8 @@ export class AnalysisService {
   uploadCombinedImage(formData: FormData) {
     return this.http.post<any>(`${this.apiServerUrl}/match/action/`, formData)
   }
+
+  descargarRecortes(matchCod: string) : Observable<Blob>{
+    return this.http.get<Blob>(`${this.apiServerUrl}/match/video/split/${matchCod}`)
+  }
 }

@@ -17,8 +17,11 @@ public enum ActionTypeEnum {
     CORNER_EN_CONTRA(10, "Corner en contra"),
     GOL_A_FAVOR(11, "Gol a favor"),
     GOL_EN_CONTRA(12, "Gol en contra"),
-    PARADA(13, "Parada");
+    PARADA(13, "Parada"),
     
+    INICIAL(14, "Jugador en el 11 inicial"),
+    CAMBIO_ENTRA(15, "Jugador entra al campo"),
+    CAMBIO_SALE(16, "Jugador sale del campo");
 
     Integer id;
     String descripcion;

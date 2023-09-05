@@ -32,11 +32,11 @@ export class AppComponent implements OnInit{
     if(this.isLogged){
       this.router.navigate(['']);
       this.mostrarWelcome = false;
-      this.componentsMap.set("welcome", true);
-      this.componentsMap.set("coach", false);
-    }else{
       this.componentsMap.set("welcome", false);
       this.componentsMap.set("coach", true);
+    }else{
+      this.componentsMap.set("welcome", true);
+      this.componentsMap.set("coach", false);
     }
 
 
@@ -54,7 +54,8 @@ export class AppComponent implements OnInit{
     if (this.tokenService.getToken()) {
 
       this.isLogged = true;
-
+      this.mostrarWelcome = false;
+      this.cdr.detectChanges
 
 
     } else {
@@ -71,9 +72,8 @@ export class AppComponent implements OnInit{
       this.screensMap.set('players', document.getElementById('pestañaPlayers')!);
       this.screensMap.set('matches', document.getElementById('pestañaMatches')!);
       this.screensMap.set('stats', document.getElementById('pestañaStats')!);
-      this.screensMap.set('rivalTeams', document.getElementById('pestañaRivalTeams')!);
+      // this.screensMap.set('rivalTeams', document.getElementById('pestañaRivalTeams')!);
 
-      this.mostrarWelcome = false;
     }else{
       this.screensMap.set('welcome', document.getElementById('welcome')!);
       this.screensMap.set('home', document.getElementById('home')!);
@@ -82,7 +82,9 @@ export class AppComponent implements OnInit{
 
     this.screensMap.forEach((value: HTMLElement, key: string) => {
       if (key == mode) {value.classList.add('current');}
-      else value.classList.remove('current');
+      else{
+        value.classList.remove('current');
+      }
     });
 
     this.componentsMap.forEach((value:Boolean, key: string) => {
@@ -93,7 +95,7 @@ export class AppComponent implements OnInit{
     if(mode == 'home'){
       this.mostrarLogin = true;
       this.mostrarWelcome = false;
-    }else if(mode = 'welcome'){
+    }else if(mode == 'welcome'){
       this.mostrarWelcome = true;
       this.mostrarLogin = false;
     }else{

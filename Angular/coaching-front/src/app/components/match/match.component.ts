@@ -8,6 +8,9 @@ import { MatchService } from './match.service';
 import { Team } from '../team';
 import { Player } from '../player/player';
 import { ActivatedRoute} from '@angular/router';
+import { ActionTypes } from 'src/app/constantes/actionTypes';
+import { PlayerService } from '../player/player.service';
+import { Action } from '../action';
 
 @Component({
   selector: 'app-match',
@@ -32,10 +35,15 @@ export class MatchComponent implements OnInit {
   progress : number = 0;
   matchVideoInProgress? : number;
   playerHash?: string | null;
+  players : Player[] = [];
+  initial11 : Player[] = [];
+
+  actionTypes = ActionTypes;
 
   constructor(private matchService: MatchService,
     private tokenService: TokenService,
-    private router: ActivatedRoute){
+    private router: ActivatedRoute,
+    private playerService : PlayerService){
 
     }
 
@@ -44,12 +52,14 @@ export class MatchComponent implements OnInit {
       this.isLogged = true;
 
       this.getMatches();
+      this.getPlayers();
     } else {
       this.playerHash = this.router.snapshot.paramMap.get('id');
       this.getMatchesForPlayer(this.playerHash);
     }
 
   }
+
   getMatchesForPlayer(playerHash: string | null) {
     throw new Error('Method not implemented.');
   }
@@ -63,6 +73,17 @@ export class MatchComponent implements OnInit {
         alert(error.message);
       }
     );
+  }
+
+  public getPlayers(): void{
+    this.playerService.getPlayers().subscribe(
+      (response: Player[]) => {
+        this.players = response;
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      }
+    )
   }
 
   onOpenModal(match: Match, mode : string): void {
@@ -112,7 +133,7 @@ export class MatchComponent implements OnInit {
         },
         date: match.date,
         matchNum: match.matchNum,
-        actions: [],
+        actions: this.crearAcciones11Inicial(),
       }
       this.matchService.addMatch(matchToAdd).subscribe(
         (response: Match) => {
@@ -129,6 +150,7 @@ export class MatchComponent implements OnInit {
               console.log(response);
               this.videoPendienteDeSubir = undefined;
               this.idMatchVideoPendiente = undefined;
+
 
               if(event.type == HttpEventType.UploadProgress){
                 var eventTotal = event.total ? event.total : 0;
@@ -216,5 +238,80 @@ export class MatchComponent implements OnInit {
     return Math.trunc(min/60);
   }
 
+  public devolverDescByName(name : string){
+    return ActionTypes.ACTION_TYPES.find(item => item.name == name)?.description;
+  }
+
+  public playerToInit(addPlayerInitForm : NgForm){
+     let index = -1;
+     index = this.initial11.findIndex(p => {
+      if(p.dni == addPlayerInitForm.value.player){
+        return true;
+      }else{
+        return false;
+      }
+    });
+    if(index < 0){
+      this.initial11.push(this.players[this.players.findIndex(p => {
+        if(p.dni == addPlayerInitForm.value.player){
+          return true;
+        }else{
+          return false;
+        }
+      })])
+    }
+
+  }
+
+  crearAcciones11Inicial() : Action[] {
+    let actions : Action[] = [];
+    this.initial11.forEach(player => {
+      let action: Action = {
+        min: 0,
+        type: 'INICIAL',
+        player: player
+      };
+      actions.push(action);
+    });
+    return actions;
+  }
+
+  obtener11Inicial() : Player[] {
+    let onceInicial : Player[] = [];
+    if(this.toShowMatch != undefined && this.toShowMatch.actions != undefined){
+      this.toShowMatch.actions.forEach(a => {
+        if(a.type == 'INICIAL'){
+          onceInicial.push(a.player)
+        }
+      })
+    }
+    return onceInicial;
+  }
+
+  obtenerSuplentes() : Player[] {
+    let suplentes : Player[] =[];
+
+    if(this.toShowMatch != undefined && this.toShowMatch.actions != undefined){
+
+      this.toShowMatch.actions.forEach(a => {
+        suplentes.push(a.player);
+        if(a.type == 'INICIAL'){
+          suplentes.pop();
+        }
+      })
+    }
+    return suplentes;
+  }
+
+  quitarPlayerDelOnce(n : number){
+    this.initial11.splice(this.rivalTeam.findIndex(element => {
+      if(element.number == n)
+        return true;
+      else
+        return false;
+    }));
+  }
 
 }
+
+

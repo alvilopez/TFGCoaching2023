@@ -11,7 +11,7 @@ import { BrowserModule } from "@angular/platform-browser";
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
   ],
   bootstrap: [AnalysisModule]
 })

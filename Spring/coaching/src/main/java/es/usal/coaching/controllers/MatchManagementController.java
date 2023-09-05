@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -144,53 +146,59 @@ public class MatchManagementController {
 
 
     @GetMapping(value = "/match/video/split/{match}")
-    public byte[] splitVideo(HttpServletRequest request,
-    HttpServletResponse response,@PathVariable String match) throws IOException{
+    public ResponseEntity<byte[]> splitVideo(@PathVariable String match) throws IOException{
         
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal();
         String username = userDetails.getUsername(); 
 
-        matchManagementService.splitVideo(match, username);
-        response.setContentType("application/zip");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.addHeader("Content-Disposition", "attachment; filename=\"test.zip\"");
+        match = matchManagementService.splitVideo(match, username);
 
         // Creating byteArray stream, make it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
         ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
 
-        // Simple file Collection, just for tests
-        ArrayList<File> files = new ArrayList<>(2);
-        File file1 = new File("resources/videos/" + username + "/split/" + match+ "/");
-        files.add(new File(file1.getAbsolutePath()));
+        File path = new File("resources");
+        File splitDirectoryFolder = new File(path.getAbsolutePath() + "/videos/" + username + "/split" + match + "/");
+        
+        comprimirCarpeta(splitDirectoryFolder, "", zipOutputStream);
 
-        // Packing files
-        for (File file : files) {
-            // New zip entry and copying InputStream with file to ZipOutputStream, after all closing streams
-            zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
-            FileInputStream fileInputStream = new FileInputStream(file1);
+        zipOutputStream.close();
 
-            IOUtils.copy(fileInputStream, zipOutputStream);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "carpeta.zip");
 
-            fileInputStream.close();
-            zipOutputStream.closeEntry();
-        }
-
-        if (zipOutputStream != null) {
-            zipOutputStream.finish();
-            zipOutputStream.flush();
-            IOUtils.closeQuietly(zipOutputStream);
-        }
-        IOUtils.closeQuietly(bufferedOutputStream);
-        IOUtils.closeQuietly(byteArrayOutputStream);
-
-        return byteArrayOutputStream.toByteArray();
+        return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
 
     }
     
+    private void comprimirCarpeta(File carpeta, String rutaRelativa, ZipOutputStream zipOutputStream) throws IOException {
+        File[] archivos = carpeta.listFiles();
+
+        if (archivos != null) {
+            for (File archivo : archivos) {
+                if (archivo.isDirectory()) {
+                    comprimirCarpeta(archivo, rutaRelativa + archivo.getName() + "/", zipOutputStream);
+                } else {
+                    FileInputStream fileInputStream = new FileInputStream(archivo);
+                    ZipEntry zipEntry = new ZipEntry(rutaRelativa + archivo.getName());
+                    zipOutputStream.putNextEntry(zipEntry);
+
+                    byte[] bytes = new byte[1024];
+                    int length;
+                    while ((length = fileInputStream.read(bytes)) >= 0) {
+                        zipOutputStream.write(bytes, 0, length);
+                    }
+
+                    fileInputStream.close();
+                }
+            }
+        }
+    }
+
     @GetMapping(value="/match/video/photo/{id}")
     public ResponseEntity<ActionDTO> postMethodName(@PathVariable Long id) throws IOException {
        

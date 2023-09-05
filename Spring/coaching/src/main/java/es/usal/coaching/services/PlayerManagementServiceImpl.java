@@ -114,9 +114,7 @@ public class PlayerManagementServiceImpl implements PlayerManagementService {
 
         Collection<Action> actions = actionRepository.findAllByPlayerId(playerToDelete.getId());
         if(!actions.isEmpty()){
-            for (Action action : actions) {
-                action.setPlayer(null);
-            }
+            actionRepository.deleteAll(actions);
         }
         playerRepository.delete(playerToDelete);
 

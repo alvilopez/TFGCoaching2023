@@ -28,6 +28,8 @@ import { StatsComponent } from './components/stats/stats.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { PhotoEditorComponent } from './components/photo-editor/photo-editor.component';
 import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 
 
@@ -62,7 +64,9 @@ import { ToastrModule } from 'ngx-toastr';
     MaterialExampleModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule
+
   ],
   providers : [interceptorProvider],
   bootstrap: [AppComponent]

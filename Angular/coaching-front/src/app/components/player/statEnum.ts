@@ -13,5 +13,8 @@ const ACTIONS = [
   {name : "CORNER_EN_CONTRA", id : 10, description : "Corner en contra"},
   {name : "GOL_A_FAVOR", id : 11, description : "Gol a favor"},
   {name : "GOL_EN_CONTRA", id : 12, description : "Gol en contra"},
-  {name : "PARADA", id :13, description : "Parada"}
+  {name : "PARADA", id :13, description : "Parada"},
+  {name : "INICIAL", id : 14, description :  "Jugador en el 11 inicial"},
+  {name : "CAMBIO_ENTRA", id : 15, description :  "Jugador entra al campo"},
+  {name : "CAMBIO_SALE", id : 16, description :  "Jugador sale del campo"},
 ]
