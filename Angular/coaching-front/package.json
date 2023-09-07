@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "compodoc": "npx compodoc -p tsconfig.doc.json"
   },
   "private": true,
   "dependencies": {
@@ -37,6 +38,7 @@
     "@angular-devkit/build-angular": "^14.0.2",
     "@angular/cli": "~14.0.2",
     "@angular/compiler-cli": "^14.0.0",
+    "@compodoc/compodoc": "^1.1.21",
     "@types/angular-file-saver": "^1.1.4",
     "@types/core-js": "^2.5.5",
     "@types/fabric": "^5.3.3",

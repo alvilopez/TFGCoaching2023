@@ -64,10 +64,13 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/v2/api-docs/**").permitAll();
+        http.authorizeRequests().antMatchers("/swagger-ui.html").permitAll();
         http.authorizeRequests().antMatchers("/assets/**").permitAll();
         http.authorizeRequests().antMatchers("/video/**").permitAll();
         http.authorizeRequests().antMatchers("/files/**/{fileName:.+}").permitAll();
         http.authorizeRequests().antMatchers("/match/player/**").permitAll();
+        http.authorizeRequests().antMatchers("/**").permitAll();
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
